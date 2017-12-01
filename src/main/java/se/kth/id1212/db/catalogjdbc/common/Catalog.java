@@ -23,7 +23,7 @@ public interface Catalog extends Remote {
      * @throws RemoteException  If unable to complete the RMI call.
      * @throws AccountException If unable to create the account.
      */
-    public void createAccount(String name, String password, int filenum) throws RemoteException, AccountException;
+    public void createAccount(String name, String password, String filenum) throws RemoteException, AccountException;
 
     //logins into an already-existant account
     public void loginAccount(String name, String password) throws RemoteException, AccountException;
@@ -63,7 +63,7 @@ public interface Catalog extends Remote {
      */
     public List<? extends AccountDTO> listAccounts() throws RemoteException, AccountException;
 
-    public void fileadding(AccountDTO acct, int filenum, String filename, String url, int size, int access, int read, int write) throws RemoteException, RejectedException,
+    public void fileadding(AccountDTO acct, String filenum, String filename, String url, int size, int access, int read, int write) throws RemoteException, RejectedException,
                                                          AccountException;
     
      /**
@@ -76,6 +76,6 @@ public interface Catalog extends Remote {
      * to delete the file.
      * @throws AccountException If unable to retrieve the file.
      */
-    public void filedelete(AccountDTO acct, int filenum) throws RemoteException, RejectedException,
+    public void filedelete(AccountDTO acct, String filenum) throws RemoteException, RejectedException,
                                                           AccountException;
 }

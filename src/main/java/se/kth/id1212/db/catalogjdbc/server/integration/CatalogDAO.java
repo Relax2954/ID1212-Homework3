@@ -70,7 +70,7 @@ public class CatalogDAO {
             findAccountStmt.setString(1, userName);
             result = findAccountStmt.executeQuery();
             if (result.next()) {
-                return new Account(userName, result.getString(PASSWORD_COLUMN_NAME), result.getInt(LOGINSTAT_COLUMN_NAME), result.getInt(FILENUM_COLUMN_NAME), result.getString(FILEE_COLUMN_NAME),
+                return new Account(userName, result.getString(PASSWORD_COLUMN_NAME), result.getInt(LOGINSTAT_COLUMN_NAME), result.getString(FILENUM_COLUMN_NAME), result.getString(FILEE_COLUMN_NAME),
                         result.getString(URL_COLUMN_NAME), result.getInt(SIZE_COLUMN_NAME), result.getInt(ACCESS_COLUMN_NAME),
                         result.getInt(READ_COLUMN_NAME), result.getInt(WRITE_COLUMN_NAME), this);
             }
@@ -94,7 +94,7 @@ public class CatalogDAO {
             findAccountByFileStmt.setString(1, fileName);
             result = findAccountStmt.executeQuery();
             if (result.next()) {
-                return new Account(result.getString(USER_COLUMN_NAME), result.getString(null), result.getInt(0), result.getInt(FILENUM_COLUMN_NAME), result.getString(FILEE_COLUMN_NAME),
+                return new Account(result.getString(USER_COLUMN_NAME), result.getString(null), result.getInt(0), result.getString(FILENUM_COLUMN_NAME), result.getString(FILEE_COLUMN_NAME),
                         result.getString(URL_COLUMN_NAME), result.getInt(SIZE_COLUMN_NAME), result.getInt(ACCESS_COLUMN_NAME),
                         result.getInt(READ_COLUMN_NAME), result.getInt(WRITE_COLUMN_NAME), this);
             }
@@ -122,7 +122,7 @@ public class CatalogDAO {
         List<Account> accounts = new ArrayList<>();
         try (ResultSet result = findAllAccountsStmt.executeQuery()) {
             while (result.next()) {
-                accounts.add(new Account(result.getString(USER_COLUMN_NAME), result.getString(PASSWORD_COLUMN_NAME), result.getInt(LOGINSTAT_COLUMN_NAME), result.getInt(FILENUM_COLUMN_NAME),
+                accounts.add(new Account(result.getString(USER_COLUMN_NAME), result.getString(PASSWORD_COLUMN_NAME), result.getInt(LOGINSTAT_COLUMN_NAME), result.getString(FILENUM_COLUMN_NAME),
                         result.getString(FILEE_COLUMN_NAME), result.getString(URL_COLUMN_NAME), result.getInt(SIZE_COLUMN_NAME),
                         result.getInt(ACCESS_COLUMN_NAME), result.getInt(READ_COLUMN_NAME), result.getInt(WRITE_COLUMN_NAME)));
             }
@@ -144,7 +144,7 @@ public class CatalogDAO {
             createAccountStmt.setString(1, account.getUserName());
             createAccountStmt.setString(2, account.getPassWord());
             createAccountStmt.setInt(3, account.getLoginStat());
-            createAccountStmt.setInt(4, account.getFileNum());
+            createAccountStmt.setString(4, account.getFileNum());
             createAccountStmt.setString(5, account.getFileName());
             createAccountStmt.setString(6, account.getUrl());
             createAccountStmt.setInt(7, account.getSize());
@@ -214,7 +214,7 @@ public class CatalogDAO {
             addFileStmt.setInt(7, account.getRead());
             addFileStmt.setInt(8, account.getWrite());
             addFileStmt.setString(9, account.getUserName());
-            addFileStmt.setInt(10, account.getFileNum());
+            addFileStmt.setString(10, account.getFileNum());
             addFileStmt.executeUpdate();
         } catch (SQLException sqle) {
             throw new CatalogDBException("Could not update the account: " + account, sqle);
@@ -228,7 +228,7 @@ public class CatalogDAO {
             Statement statement = connection.createStatement();
             statement.executeUpdate("CREATE TABLE " + TABLE_NAME
                     + " (" + USER_COLUMN_NAME + " VARCHAR(32) , " + PASSWORD_COLUMN_NAME + " VARCHAR(32), " + LOGINSTAT_COLUMN_NAME + " FLOAT, "
-                    + FILENUM_COLUMN_NAME + " FLOAT PRIMARY KEY , " + FILEE_COLUMN_NAME + " VARCHAR(32), "
+                    + FILENUM_COLUMN_NAME + " VARCHAR(32) PRIMARY KEY , " + FILEE_COLUMN_NAME + " VARCHAR(32), "
                     + URL_COLUMN_NAME + " VARCHAR(250), " + SIZE_COLUMN_NAME + " FLOAT, " + ACCESS_COLUMN_NAME + " INT, "
                     + READ_COLUMN_NAME + " INT, " + WRITE_COLUMN_NAME + " INT ) ");
 

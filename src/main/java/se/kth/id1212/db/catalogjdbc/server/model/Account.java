@@ -11,7 +11,7 @@ public class Account implements AccountDTO {
     private String userName;
     private String passWord;
     private int loginStat;
-    private int filenum;
+    private String filenum;
     private String fileName;
     private String url;
     private int size;
@@ -36,7 +36,7 @@ public class Account implements AccountDTO {
      * @param write whether can be written to by others or not
      * @param catalogDB The DAO used to store updates to the database.
      */
-    public Account(String userName, String passWord, int loginStat, int filenum, String filename, String url, int size, int access, int read, int write, CatalogDAO catalogDB) {
+    public Account(String userName, String passWord, int loginStat, String filenum, String filename, String url, int size, int access, int read, int write, CatalogDAO catalogDB) {
         this.userName = userName;
         this.passWord= passWord;
         this.loginStat=loginStat;
@@ -65,7 +65,7 @@ public class Account implements AccountDTO {
      * @param read whether can be reade by others or not
      * @param write whether can be written to by others or not
      */
-    public Account(String userName, String passWord, int loginStat, int filenum, String filename, String url, int size, int access, int read, int write) {
+    public Account(String userName, String passWord, int loginStat, String filenum, String filename, String url, int size, int access, int read, int write) {
         this(userName, passWord, loginStat, filenum, filename, url, size, access, read, write, null);
     }
 
@@ -74,9 +74,10 @@ public class Account implements AccountDTO {
      *
      * @param userName The account user's userName.
      * @param passWord
+     * @param filenum
      * @param catalogDB The DAO used to store updates to the database.
      */
-    public Account(String userName, String passWord, int filenum, CatalogDAO catalogDB) {
+    public Account(String userName, String passWord, String filenum, CatalogDAO catalogDB) {
         this(userName, passWord, 0, filenum, null, null, 0, 0, 0, 0, catalogDB);
     }
 
@@ -93,28 +94,28 @@ public class Account implements AccountDTO {
      * @throws AccountException If the specified num is negative, or if unable
      * to perform the update.
      */
-    public void fileadding(int filenum, String filename, String url, int size, int access, int read, int write) throws RejectedException {
-        if (filenum < 0) {
-            throw new RejectedException(
-                    "Tried to add negative value of filenum, illegal value: " + filenum + "." + accountInfo());
-        }
+    public void fileadding(String filenum, String filename, String url, int size, int access, int read, int write) throws RejectedException {
+        /*if (filenum < 0) {
+        throw new RejectedException(
+        "Tried to add negative value of filenum, illegal value: " + filenum + "." + accountInfo());
+        }*/
         changeFileInfo(filenum, filename, url, size, access, read, write, "Could not add the file.");
     }
 
-    public void filedelete(int filenum) throws RejectedException {
-        if (filenum < 0) {
-            throw new RejectedException(
-                    "Tried to delete a non-existant file, illegal value: " + filenum + "." + accountInfo());
-        }
+    public void filedelete(String filenum) throws RejectedException {
+        /*if (filenum < 0) {
+        throw new RejectedException(
+        "Tried to delete a non-existant file, illegal value: " + filenum + "." + accountInfo());
+        }*/
 
-        changeFileInfo(0, null, null, 0, 0, 0, 0, "Could not delete the file.");
+        changeFileInfo(null, null, null, 0, 0, 0, 0, "Could not delete the file.");
     }
 
-    private void changeFileInfo(int newfilenum, String newfilename, String newurl, int newsize,
+    private void changeFileInfo(String newfilenum, String newfilename, String newurl, int newsize,
         int newaccess, int newread, int newwrite, String failureMsg) throws RejectedException {
         String initialpassword=this.passWord;
         int initiallogin=this.loginStat;
-        int initialfilenum = filenum;
+        String initialfilenum = filenum;
         String initialfileName = fileName;
         String initialurl = url;
         int initialsize = size;
@@ -149,7 +150,7 @@ public class Account implements AccountDTO {
         return " " + this;
     }
 
-    public int getFileNum() {
+    public String getFileNum() {
         return filenum;
     }
 

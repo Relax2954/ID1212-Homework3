@@ -56,7 +56,7 @@ public class NonBlockingInterpreter implements Runnable {
                         receivingCmds = false;
                         break;
                     case REGISTER:
-                        catalog.createAccount(cmdLine.getParameter(0), cmdLine.getParameter(1), Integer.parseInt(cmdLine.getParameter(2)));
+                        catalog.createAccount(cmdLine.getParameter(0), cmdLine.getParameter(1), cmdLine.getParameter(2));
                         break;
                     case LOGIN:
                         catalog.loginAccount(cmdLine.getParameter(0), cmdLine.getParameter(1));
@@ -78,19 +78,19 @@ public class NonBlockingInterpreter implements Runnable {
                         break;
                     case UPDATEFILE:
                         acct = catalog.getAccount(cmdLine.getParameter(0));
-                        catalog.fileadding(acct, Integer.parseInt(cmdLine.getParameter(1)), cmdLine.getParameter(2),
+                        catalog.fileadding(acct, cmdLine.getParameter(1), cmdLine.getParameter(2),
                                 cmdLine.getParameter(3), Integer.parseInt(cmdLine.getParameter(4)), Integer.parseInt(cmdLine.getParameter(5)),
                                 Integer.parseInt(cmdLine.getParameter(6)), Integer.parseInt(cmdLine.getParameter(7)));
                         break;
                     case DELETEFILE:
                         acct = catalog.getAccount(cmdLine.getParameter(0));
-                        catalog.filedelete(acct, Integer.parseInt(cmdLine.getParameter(1)));
+                        catalog.filedelete(acct, cmdLine.getParameter(1));
                         break;
                     case FILEREAD://this lists all files from a specific user, this is NOT NECESSARY ???
                         
                         acct = catalog.getAccountByFileName(cmdLine.getParameter(0));
                         if(acct.getRead()==1)
-                        outMgr.println(Integer.toString(acct.getFileNum()) + acct.getFileName() + acct.getUrl() + Integer.toString(acct.getSize())
+                        outMgr.println(acct.getFileNum() + acct.getFileName() + acct.getUrl() + Integer.toString(acct.getSize())
                                 + Integer.toString(acct.getAccess()) + Integer.toString(acct.getRead()) + Integer.toString(acct.getWrite()));
                         else outMgr.println("File not readable");
                         break;

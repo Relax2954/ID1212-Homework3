@@ -56,7 +56,7 @@ public class Controller extends UnicastRemoteObject implements Catalog {
     }
     
     @Override
-    public synchronized void createAccount(String userName, String passWord, int filenum) throws AccountException {
+    public synchronized void createAccount(String userName, String passWord, String filenum) throws AccountException {
         String acctExistsMsg = "Account for: " + userName + " already exists";
         String failureMsg = "The acc already exists: " + userName;
         try {
@@ -105,7 +105,7 @@ public class Controller extends UnicastRemoteObject implements Catalog {
     }
 
     @Override
-    public synchronized void fileadding(AccountDTO acctDTO, int filenum, String filename, String url, int size, int access, int read, int write) throws RejectedException, AccountException {
+    public synchronized void fileadding(AccountDTO acctDTO, String filenum, String filename, String url, int size, int access, int read, int write) throws RejectedException, AccountException {
         Account acct = (Account) getAccount(acctDTO.getUserName());
         acct.fileadding(filenum,filename,url,size,access, read,write);
         /*acct.filenumAdd(filenum);
@@ -117,7 +117,7 @@ public class Controller extends UnicastRemoteObject implements Catalog {
         acct.writeAdd(write); */
     }
      @Override
-    public synchronized void filedelete(AccountDTO acctDTO, int filenum) throws RejectedException, AccountException {
+    public synchronized void filedelete(AccountDTO acctDTO, String filenum) throws RejectedException, AccountException {
         Account acct = (Account) getAccount(acctDTO.getUserName());
         acct.filedelete(filenum);
     }

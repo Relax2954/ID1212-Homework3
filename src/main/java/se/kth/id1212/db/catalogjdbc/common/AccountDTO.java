@@ -13,7 +13,7 @@ public interface AccountDTO extends Serializable {
     //checks the login status
     public int getLoginStat();
     //returns the number of the file
-   public int getFileNum();
+   public String getFileNum();
     
    //returns the name of the file
    public String getFileName();
