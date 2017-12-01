@@ -81,8 +81,11 @@ public class Account implements AccountDTO {
         this(userName, passWord, 0, filenum, null, null, 0, 0, 0, 0, catalogDB);
     }
 
+    public void filedelete(String filenum) throws RejectedException {
+        changeFileInfo(filenum, null, null, 0, 0, 0, 0, "Could not delete the file.");
+    }
     /**
-     * Adds the specified file.
+     * THIS IS USED FOR EDITING A FILE.
      *
      * @param filenum
      * @param filename
@@ -102,14 +105,7 @@ public class Account implements AccountDTO {
         changeFileInfo(filenum, filename, url, size, access, read, write, "Could not add the file.");
     }
 
-    public void filedelete(String filenum) throws RejectedException {
-        /*if (filenum < 0) {
-        throw new RejectedException(
-        "Tried to delete a non-existant file, illegal value: " + filenum + "." + accountInfo());
-        }*/
-
-        changeFileInfo(null, null, null, 0, 0, 0, 0, "Could not delete the file.");
-    }
+   
 
     private void changeFileInfo(String newfilenum, String newfilename, String newurl, int newsize,
         int newaccess, int newread, int newwrite, String failureMsg) throws RejectedException {

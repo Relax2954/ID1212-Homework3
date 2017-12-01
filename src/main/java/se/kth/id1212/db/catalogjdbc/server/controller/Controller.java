@@ -56,6 +56,20 @@ public class Controller extends UnicastRemoteObject implements Catalog {
     }
     
     @Override
+    public synchronized void addafil(String userName, String passWord, String filenum) throws AccountException {
+        String acctExistsMsg = "Account for: " + userName + " already exists";
+        String failureMsg = "The acc already exists: " + userName;
+        try {
+            /*if (catalogDb.findAccountByName(userName) != null) {
+            throw new AccountException(acctExistsMsg);
+            }*/
+            catalogDb.addafil(new Account(userName, passWord, filenum, catalogDb));
+        } catch (Exception e) {
+            throw new AccountException(failureMsg, e);
+        }
+    }
+    
+    @Override
     public synchronized void createAccount(String userName, String passWord, String filenum) throws AccountException {
         String acctExistsMsg = "Account for: " + userName + " already exists";
         String failureMsg = "The acc already exists: " + userName;
@@ -120,7 +134,7 @@ public class Controller extends UnicastRemoteObject implements Catalog {
     }
      @Override
     public synchronized void filedelete(AccountDTO acctDTO, String filenum) throws RejectedException, AccountException {
-        Account acct = (Account) getAccount(acctDTO.getUserName());
+        Account acct = (Account) getAccount(acctDTO.getFileNum());
         acct.filedelete(filenum);
     }
 }

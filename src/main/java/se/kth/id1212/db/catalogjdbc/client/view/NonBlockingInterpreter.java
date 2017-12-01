@@ -1,4 +1,3 @@
-
 package se.kth.id1212.db.catalogjdbc.client.view;
 
 import java.util.List;
@@ -7,12 +6,14 @@ import se.kth.id1212.db.catalogjdbc.common.Catalog;
 import se.kth.id1212.db.catalogjdbc.common.AccountDTO;
 
 /**
- * Reads and interprets user commands. The command interpreter will run in a separate thread, which
- * is started by calling the <code>start</code> method. Commands are executed in a thread pool, a
- * new prompt will be displayed as soon as a command is submitted to the pool, without waiting for
- * command execution to complete.
+ * Reads and interprets user commands. The command interpreter will run in a
+ * separate thread, which is started by calling the <code>start</code> method.
+ * Commands are executed in a thread pool, a new prompt will be displayed as
+ * soon as a command is submitted to the pool, without waiting for command
+ * execution to complete.
  */
 public class NonBlockingInterpreter implements Runnable {
+
     private static final String PROMPT = "> ";
     private final Scanner console = new Scanner(System.in);
     private final ThreadSafeStdOut outMgr = new ThreadSafeStdOut();
@@ -20,8 +21,9 @@ public class NonBlockingInterpreter implements Runnable {
     private boolean receivingCmds = false;
 
     /**
-     * Starts the interpreter. The interpreter will be waiting for user input when this method
-     * returns. Calling <code>start</code> on an interpreter that is already started has no effect.
+     * Starts the interpreter. The interpreter will be waiting for user input
+     * when this method returns. Calling <code>start</code> on an interpreter
+     * that is already started has no effect.
      *
      * @param server The server with which this chat client will communicate.
      */
@@ -40,6 +42,7 @@ public class NonBlockingInterpreter implements Runnable {
     @Override
     public void run() {
         AccountDTO acct = null;
+        AccountDTO acct01 = null;
         while (receivingCmds) {
             try {
                 CmdLine cmdLine = new CmdLine(readNextLine());
@@ -55,6 +58,12 @@ public class NonBlockingInterpreter implements Runnable {
                     case QUIT:
                         receivingCmds = false;
                         break;
+                    case ADDFILE:
+                        acct = catalog.getAcc(cmdLine.getParameter(0));
+                        if(acct.getLoginStat()==1){
+                        catalog.addafil(cmdLine.getParameter(0), acct.getPassWord(), cmdLine.getParameter(1));
+                        }
+                        break;
                     case REGISTER:
                         catalog.createAccount(cmdLine.getParameter(0), cmdLine.getParameter(1), cmdLine.getParameter(2));
                         break;
@@ -68,31 +77,36 @@ public class NonBlockingInterpreter implements Runnable {
                         acct = catalog.getAccount(cmdLine.getParameter(0));
                         catalog.deleteAccount(acct);
                         break;
-                    case LIST:
+                    case LIST:  //NOT FIXED
                         List<? extends AccountDTO> accounts = catalog.listAccounts();
                         for (AccountDTO account : accounts) {
-                            outMgr.println(account.getUserName() + ": FileNum:" + account.getFileNum() + "; Login:" + account.getLoginStat() +"; FileName:" + account.getFileName()
+                            outMgr.println(account.getUserName() + ": FileNum:" + account.getFileNum() + "; Login:" + account.getLoginStat() + "; FileName:" + account.getFileName()
                                     + "; Url:" + account.getUrl() + "; Size:" + account.getSize() + "; Public access:" + account.getAccess() + "; ReadByEveryone:" + account.getRead()
                                     + "; WritebyEveryone:" + account.getWrite());
                         }
                         break;
                     case UPDATEFILE:
-                        acct = catalog.getAccount(cmdLine.getParameter(0));
-                        catalog.fileadding(acct, cmdLine.getParameter(1), cmdLine.getParameter(2),
-                                cmdLine.getParameter(3), Integer.parseInt(cmdLine.getParameter(4)), Integer.parseInt(cmdLine.getParameter(5)),
-                                Integer.parseInt(cmdLine.getParameter(6)), Integer.parseInt(cmdLine.getParameter(7)));
+                        acct01= catalog.getAcc(cmdLine.getParameter(0));
+                        acct = catalog.getAccount(cmdLine.getParameter(1));
+                        if((acct.getUserName().equalsIgnoreCase(acct01.getUserName())&& acct.getLoginStat()==1) || acct.getWrite()==1){
+                        catalog.fileadding(acct, cmdLine.getParameter(2), cmdLine.getParameter(3),
+                                cmdLine.getParameter(4), Integer.parseInt(cmdLine.getParameter(5)), Integer.parseInt(cmdLine.getParameter(6)),
+                                Integer.parseInt(cmdLine.getParameter(7)), Integer.parseInt(cmdLine.getParameter(8)));
+                        }
                         break;
                     case DELETEFILE:
                         acct = catalog.getAccount(cmdLine.getParameter(0));
                         catalog.filedelete(acct, cmdLine.getParameter(1));
                         break;
                     case FILEREAD://this lists all files from a specific user, this is NOT NECESSARY ???
-                        
+
                         //acct = catalog.getAccountByFileName(cmdLine.getParameter(0));
-                        if(acct.getRead()==1)
-                        outMgr.println(acct.getFileNum() + acct.getFileName() + acct.getUrl() + Integer.toString(acct.getSize())
-                                + Integer.toString(acct.getAccess()) + Integer.toString(acct.getRead()) + Integer.toString(acct.getWrite()));
-                        else outMgr.println("File not readable");
+                        if (acct.getRead() == 1) {
+                            outMgr.println(acct.getFileNum() + acct.getFileName() + acct.getUrl() + Integer.toString(acct.getSize())
+                                    + Integer.toString(acct.getAccess()) + Integer.toString(acct.getRead()) + Integer.toString(acct.getWrite()));
+                        } else {
+                            outMgr.println("File not readable");
+                        }
                         break;
                     default:
                         outMgr.println("Done");

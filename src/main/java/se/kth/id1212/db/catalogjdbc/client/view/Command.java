@@ -21,6 +21,9 @@ public enum Command {
      * Deletes the specified account.
      */
     DELETE,
+    
+    //ADDS A SPECIFIC FILE
+    ADDFILE,
     /**
      * Adds the specified file to the specified account
      */

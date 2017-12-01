@@ -24,7 +24,8 @@ public interface Catalog extends Remote {
      * @throws AccountException If unable to create the account.
      */
     public void createAccount(String name, String password, String filenum) throws RemoteException, AccountException;
-
+    //adding a file
+    public void addafil(String name, String password, String filenum) throws RemoteException, AccountException;
     //logins into an already-existant account
     public void loginAccount(String name, String password) throws RemoteException, AccountException;
     //logs out from an account

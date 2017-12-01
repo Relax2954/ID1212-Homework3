@@ -85,7 +85,7 @@ public class CatalogDAO {
         }
         return null;
     }
-    
+
     public Account findAccountByNom(String name) throws CatalogDBException {
         String failureMsg = "Could not search for specified account.";
         ResultSet result = null;
@@ -108,7 +108,7 @@ public class CatalogDAO {
         }
         return null;
     }
-    
+
     /**
      * Retrieves all existing accounts.
      *
@@ -137,6 +137,28 @@ public class CatalogDAO {
      * @param account The account to create.
      * @throws CatalogDBException If failed to create the specified account.
      */
+    public void addafil(AccountDTO account) throws CatalogDBException {
+        String failureMsg = "Could not create the file: " + account;
+        try {
+            createAccountStmt.setString(1, account.getUserName());
+            createAccountStmt.setString(2, account.getPassWord());
+            createAccountStmt.setInt(3, 1);
+            createAccountStmt.setString(4, account.getFileNum());
+            createAccountStmt.setString(5, account.getFileName());
+            createAccountStmt.setString(6, account.getUrl());
+            createAccountStmt.setInt(7, account.getSize());
+            createAccountStmt.setInt(8, account.getAccess());
+            createAccountStmt.setInt(9, account.getRead());
+            createAccountStmt.setInt(10, account.getWrite());
+            int rows = createAccountStmt.executeUpdate();
+            if (rows != 1) {
+                throw new CatalogDBException(failureMsg);
+            }
+        } catch (SQLException sqle) {
+            throw new CatalogDBException(failureMsg, sqle);
+        }
+    }
+
     public void createAccount(AccountDTO account) throws CatalogDBException {
         String failureMsg = "Could not create the account: " + account;
         try {
@@ -150,10 +172,10 @@ public class CatalogDAO {
             createAccountStmt.setInt(8, account.getAccess());
             createAccountStmt.setInt(9, account.getRead());
             createAccountStmt.setInt(10, account.getWrite());
-            int rows=createAccountStmt.executeUpdate();
-             if (rows != 1) {
-             throw new CatalogDBException(failureMsg);
-             }
+            int rows = createAccountStmt.executeUpdate();
+            if (rows != 1) {
+                throw new CatalogDBException(failureMsg);
+            }
         } catch (SQLException sqle) {
             throw new CatalogDBException(failureMsg, sqle);
         }
@@ -161,13 +183,14 @@ public class CatalogDAO {
 
     public void loginAccount(AccountDTO account, String pass) throws CatalogDBException, SQLException {
         String failureMsg = "Could not login intoo account: " + account;
-        if(account.getPassWord().equals(pass)){
-        loginAccountStmt.setInt(1, 1);
-        loginAccountStmt.setInt(2, 1);
-        loginAccountStmt.setString(3, account.getUserName());
-        loginAccountStmt.executeUpdate();
+        if (account.getPassWord().equals(pass)) {
+            loginAccountStmt.setInt(1, 1);
+            loginAccountStmt.setInt(2, 1);
+            loginAccountStmt.setString(3, account.getUserName());
+            loginAccountStmt.executeUpdate();
         }
     }
+
     public void logoutAccount(AccountDTO account) throws CatalogDBException, SQLException {
         String failureMsg = "Could not login out of account: " + account;
         loginAccountStmt.setInt(1, 0);
@@ -271,14 +294,14 @@ public class CatalogDAO {
                 + TABLE_NAME + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ? )");
         findAccountStmt = connection.prepareStatement("SELECT * from "
                 + TABLE_NAME + " WHERE FILENUM = ?");
-        findAccountNOMStmt= connection.prepareStatement("SELECT * from "
+        findAccountNOMStmt = connection.prepareStatement("SELECT * from "
                 + TABLE_NAME + " WHERE NAME = ?");
         findAllAccountsStmt = connection.prepareStatement("SELECT * from "
                 + TABLE_NAME);
         deleteAccountStmt = connection.prepareStatement("DELETE FROM "
                 + TABLE_NAME
                 + " WHERE name = ?");
-        loginAccountStmt=connection.prepareStatement("UPDATE "+ TABLE_NAME + " SET loginstat=?, access=?  WHERE name=? ");
+        loginAccountStmt = connection.prepareStatement("UPDATE " + TABLE_NAME + " SET loginstat=?, access=?  WHERE name=? ");
         addFileStmt = connection.prepareStatement("UPDATE "
                 + TABLE_NAME
                 + " SET  password=?, loginstat=?,  filename=?,  url=?,  size=?,  access=?, "
