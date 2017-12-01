@@ -19,11 +19,16 @@ public interface Catalog extends Remote {
      * Creates an account with the specified name and the balance zero.
      *
      * @param name The account user's name.
+     * @param password
      * @throws RemoteException  If unable to complete the RMI call.
      * @throws AccountException If unable to create the account.
      */
-    public void createAccount(String name) throws RemoteException, AccountException;
+    public void createAccount(String name, String password) throws RemoteException, AccountException;
 
+    //logins into an already-existant account
+    public void loginAccount(String name, String password) throws RemoteException, AccountException;
+    //logs out from an account
+     public void logoutAccount(String name, String password) throws RemoteException, AccountException;
     /**
      * Returns the account of the specified user, or <code>null</code> if there is no such
      * account.
@@ -35,6 +40,8 @@ public interface Catalog extends Remote {
      * @throws AccountException If unable to search for the account.
      */
     public AccountDTO getAccount(String name) throws RemoteException, AccountException;
+    
+    public  AccountDTO getAccountByFileName(String fileName)  throws RemoteException, AccountException;
 
     /**
      * Deletes the specified account, if there is such an account. If there is no
@@ -56,7 +63,7 @@ public interface Catalog extends Remote {
      */
     public List<? extends AccountDTO> listAccounts() throws RemoteException, AccountException;
 
-    public void fileadding(AccountDTO acct, int filenum, String filename, String url, int size, boolean access, boolean read, boolean write) throws RemoteException, RejectedException,
+    public void fileadding(AccountDTO acct, int filenum, String filename, String url, int size, int access, int read, int write) throws RemoteException, RejectedException,
                                                          AccountException;
     
      /**

@@ -8,7 +8,11 @@ public enum Command {
     /**
      * Creates a new account.
      */
-    NEW,
+    REGISTER,
+    //Logins into an account
+    LOGIN,
+    //Logouts from an account
+    LOGOUT,
     /**
      * Lists all existing accounts.
      */
@@ -26,9 +30,9 @@ public enum Command {
      */
     DELETEFILE,
     /**
-     * Lists the files of the specified account.
+     * Reads a specific file.
      */
-    FILELIST,
+    FILEREAD,
     /**
      * Lists all commands.
      */

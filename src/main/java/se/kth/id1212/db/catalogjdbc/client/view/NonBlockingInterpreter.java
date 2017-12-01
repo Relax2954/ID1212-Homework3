@@ -55,9 +55,14 @@ public class NonBlockingInterpreter implements Runnable {
                     case QUIT:
                         receivingCmds = false;
                         break;
-                    case NEW:
-                        catalog.createAccount(cmdLine.getParameter(0));
-                        ;
+                    case REGISTER:
+                        catalog.createAccount(cmdLine.getParameter(0), cmdLine.getParameter(1));
+                        break;
+                    case LOGIN:
+                        catalog.loginAccount(cmdLine.getParameter(0), cmdLine.getParameter(1));
+                        break;
+                    case LOGOUT:
+                        catalog.logoutAccount(cmdLine.getParameter(0), cmdLine.getParameter(1));
                         break;
                     case DELETE:
                         acct = catalog.getAccount(cmdLine.getParameter(0));
@@ -66,7 +71,7 @@ public class NonBlockingInterpreter implements Runnable {
                     case LIST:
                         List<? extends AccountDTO> accounts = catalog.listAccounts();
                         for (AccountDTO account : accounts) {
-                            outMgr.println(account.getUserName() + ": FileNum:" + account.getFileNum() + "; FileName:" + account.getFileName()
+                            outMgr.println(account.getUserName() + ": FileNum:" + account.getFileNum() + "; Login:" + account.getLoginStat() +"; FileName:" + account.getFileName()
                                     + "; Url:" + account.getUrl() + "; Size:" + account.getSize() + "; Public access:" + account.getAccess() + "; ReadByEveryone:" + account.getRead()
                                     + "; WritebyEveryone:" + account.getWrite());
                         }
@@ -74,17 +79,20 @@ public class NonBlockingInterpreter implements Runnable {
                     case ADDFILE:
                         acct = catalog.getAccount(cmdLine.getParameter(0));
                         catalog.fileadding(acct, Integer.parseInt(cmdLine.getParameter(1)), cmdLine.getParameter(2),
-                                cmdLine.getParameter(3), Integer.parseInt(cmdLine.getParameter(4)), Boolean.parseBoolean(cmdLine.getParameter(5)),
-                                Boolean.parseBoolean(cmdLine.getParameter(6)), Boolean.parseBoolean(cmdLine.getParameter(7)));
+                                cmdLine.getParameter(3), Integer.parseInt(cmdLine.getParameter(4)), Integer.parseInt(cmdLine.getParameter(5)),
+                                Integer.parseInt(cmdLine.getParameter(6)), Integer.parseInt(cmdLine.getParameter(7)));
                         break;
                     case DELETEFILE:
                         acct = catalog.getAccount(cmdLine.getParameter(0));
                         catalog.filedelete(acct, Integer.parseInt(cmdLine.getParameter(1)));
                         break;
-                    case FILELIST://this lists all files from a specific user, this is NOT NECESSARY ???
-                        acct = catalog.getAccount(cmdLine.getParameter(0));
+                    case FILEREAD://this lists all files from a specific user, this is NOT NECESSARY ???
+                        
+                        acct = catalog.getAccountByFileName(cmdLine.getParameter(0));
+                        if(acct.getRead()==1)
                         outMgr.println(Integer.toString(acct.getFileNum()) + acct.getFileName() + acct.getUrl() + Integer.toString(acct.getSize())
-                                + Boolean.toString(acct.getAccess()) + Boolean.toString(acct.getRead()) + Boolean.toString(acct.getWrite()));
+                                + Integer.toString(acct.getAccess()) + Integer.toString(acct.getRead()) + Integer.toString(acct.getWrite()));
+                        else outMgr.println("File not readable");
                         break;
                     default:
                         outMgr.println("illegal command");
@@ -92,6 +100,7 @@ public class NonBlockingInterpreter implements Runnable {
             } catch (Exception e) {
                 outMgr.println("Operation failed");
                 outMgr.println(e.getMessage());
+                e.printStackTrace();
             }
         }
     }

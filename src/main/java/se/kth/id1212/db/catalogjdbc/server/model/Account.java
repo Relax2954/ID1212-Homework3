@@ -9,13 +9,15 @@ import se.kth.id1212.db.catalogjdbc.server.integration.CatalogDAO;
 public class Account implements AccountDTO {
 
     private String userName;
+    private String passWord;
+    private int loginStat;
     private int filenum;
     private String fileName;
     private String url;
     private int size;
-    private boolean access;
-    private boolean read;
-    private boolean write;
+    private int access;
+    private int read;
+    private int write;
     private transient CatalogDAO catalogDB;
 
     /**
@@ -23,6 +25,8 @@ public class Account implements AccountDTO {
      * account object will have a database connection.
      *
      * @param userName The account user's userName.
+     * @param passWord
+     * @param loginStat
      * @param filenum number of the file
      * @param filename name of the file
      * @param url url of the file
@@ -32,11 +36,14 @@ public class Account implements AccountDTO {
      * @param write whether can be written to by others or not
      * @param catalogDB The DAO used to store updates to the database.
      */
-    public Account(String userName, int filenum, String filename, String url, int size, boolean access, boolean read, boolean write, CatalogDAO catalogDB) {
+    public Account(String userName, String passWord, int loginStat, int filenum, String filename, String url, int size, int access, int read, int write, CatalogDAO catalogDB) {
         this.userName = userName;
+        this.passWord= passWord;
+        this.loginStat=loginStat;
         this.filenum = filenum;
         this.fileName = filename;
         this.url = url;
+        this.size=size;
         this.access = access;
         this.read = read;
         this.write = write;
@@ -47,6 +54,8 @@ public class Account implements AccountDTO {
      * account object will not have a database connection.
      *
      * @param userName The account user's userName.
+     * @param passWord
+     * @param loginStat
      * @param filenum number of the file
      * @param filename name of the file
      * @param url url of the file
@@ -55,18 +64,19 @@ public class Account implements AccountDTO {
      * @param read whether can be reade by others or not
      * @param write whether can be written to by others or not
      */
-    public Account(String userName, int filenum, String filename, String url, int size, boolean access, boolean read, boolean write) {
-        this(userName, filenum, filename, url, size, access, read, write, null);
+    public Account(String userName, String passWord, int loginStat, int filenum, String filename, String url, int size, int access, int read, int write) {
+        this(userName, passWord, loginStat, filenum, filename, url, size, access, read, write, null);
     }
 
     /**
      * Creates an account for the specified user with the stuff zero.
      *
      * @param userName The account user's userName.
+     * @param passWord
      * @param catalogDB The DAO used to store updates to the database.
      */
-    public Account(String userName, CatalogDAO catalogDB) {
-        this(userName, 0, null, null, 0, false, false, false, catalogDB);
+    public Account(String userName, String passWord, CatalogDAO catalogDB) {
+        this(userName, passWord, 0, 0, null, null, 0, 0, 0, 0, catalogDB);
     }
 
     /**
@@ -82,7 +92,7 @@ public class Account implements AccountDTO {
      * @throws AccountException If the specified num is negative, or if unable
      * to perform the update.
      */
-    public void fileadding(int filenum, String filename, String url, int size, boolean access, boolean read, boolean write) throws RejectedException {
+    public void fileadding(int filenum, String filename, String url, int size, int access, int read, int write) throws RejectedException {
         if (filenum < 0) {
             throw new RejectedException(
                     "Tried to add negative value of filenum, illegal value: " + filenum + "." + accountInfo());
@@ -96,20 +106,24 @@ public class Account implements AccountDTO {
                     "Tried to delete a non-existant file, illegal value: " + filenum + "." + accountInfo());
         }
 
-        changeFileInfo(0, null, null, 0, false, false, false, "Could not delete the file.");
+        changeFileInfo(0, null, null, 0, 0, 0, 0, "Could not delete the file.");
     }
 
     private void changeFileInfo(int newfilenum, String newfilename, String newurl, int newsize,
-            boolean newaccess, boolean newread, boolean newwrite, String failureMsg) throws RejectedException {
+        int newaccess, int newread, int newwrite, String failureMsg) throws RejectedException {
+        String initialpassword=this.passWord;
+        int initiallogin=this.loginStat;
         int initialfilenum = filenum;
         String initialfileName = fileName;
         String initialurl = url;
         int initialsize = size;
-        boolean initialaccess = access;
-        boolean initialread = read;
-        boolean initialwrite = write;
+        int initialaccess = access;
+        int initialread = read;
+        int initialwrite = write;
 
         try {
+            passWord=initialpassword;
+            loginStat=initiallogin;
             filenum = newfilenum;
             fileName = newfilename;
             url = newurl;
@@ -150,15 +164,15 @@ public class Account implements AccountDTO {
         return size;
     }
 
-    public boolean getAccess() {
+    public int getAccess() {
         return access;
     }
 
-    public boolean getRead() {
+    public int getRead() {
         return read;
     }
 
-    public boolean getWrite() {
+    public int getWrite() {
         return write;
     }
 
@@ -168,6 +182,13 @@ public class Account implements AccountDTO {
     public String getUserName() {
         return userName;
     }
+    public String getPassWord(){
+        return passWord;
+    }
+    public int getLoginStat(){
+        return loginStat;
+    }
+    
     
     /**
      * @return A string representation of all fields in this object.

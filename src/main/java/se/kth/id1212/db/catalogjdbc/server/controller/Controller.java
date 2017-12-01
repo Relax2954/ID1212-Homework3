@@ -33,19 +33,55 @@ public class Controller extends UnicastRemoteObject implements Catalog {
     }
 
     @Override
-    public synchronized void createAccount(String userName) throws AccountException {
+    public synchronized void loginAccount(String userName, String passWord) throws AccountException{
+        //String acctloggedin= " Already logged in into account for: " + userName + " .";
+        String failureMsg = "Could not login into " + userName;
+        try {
+            catalogDb.loginAccount(getAccount(userName), passWord);
+        }catch (Exception e) {
+            throw new AccountException(failureMsg, e);
+        }
+    //}
+    }
+    
+        @Override
+    public synchronized void logoutAccount(String userName, String passWord) throws AccountException{
+       // String acctloggedout= " Already logged out from account: " + userName + " .";
+        String failureMsg = "Could not log out from " + userName;
+        try {
+            catalogDb.logoutAccount(getAccount(userName));
+        }catch (Exception e) {
+            throw new AccountException(failureMsg, e);
+        }
+    }
+    
+    @Override
+    public synchronized void createAccount(String userName, String passWord) throws AccountException {
         String acctExistsMsg = "Account for: " + userName + " already exists";
-        String failureMsg = "Could not create account for: " + userName;
+        String failureMsg = "The acc already exists: " + userName;
         try {
             if (catalogDb.findAccountByName(userName) != null) {
                 throw new AccountException(acctExistsMsg);
             }
-            catalogDb.createAccount(new Account(userName, catalogDb));
+            catalogDb.createAccount(new Account(userName, passWord, catalogDb));
         } catch (Exception e) {
             throw new AccountException(failureMsg, e);
         }
     }
 
+    @Override
+    public synchronized AccountDTO getAccountByFileName(String fileName) throws AccountException {
+        if (fileName == null) {
+            return null;
+        }
+
+        try {
+            return catalogDb.findAccountByNameFile(fileName);
+        } catch (Exception e) {
+            throw new AccountException("Could not search for account.", e);
+        }
+    }
+    
     @Override
     public synchronized AccountDTO getAccount(String userName) throws AccountException {
         if (userName == null) {
@@ -69,7 +105,7 @@ public class Controller extends UnicastRemoteObject implements Catalog {
     }
 
     @Override
-    public synchronized void fileadding(AccountDTO acctDTO, int filenum, String filename, String url, int size, boolean access, boolean read, boolean write) throws RejectedException, AccountException {
+    public synchronized void fileadding(AccountDTO acctDTO, int filenum, String filename, String url, int size, int access, int read, int write) throws RejectedException, AccountException {
         Account acct = (Account) getAccount(acctDTO.getUserName());
         acct.fileadding(filenum,filename,url,size,access, read,write);
         /*acct.filenumAdd(filenum);
