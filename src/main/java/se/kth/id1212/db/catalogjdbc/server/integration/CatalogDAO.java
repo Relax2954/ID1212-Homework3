@@ -37,7 +37,7 @@ public class CatalogDAO {
     private PreparedStatement deleteAccountStmt;
     private PreparedStatement addFileStmt;
     private PreparedStatement loginAccountStmt;
-    private PreparedStatement findAccountByFileStmt;
+    private PreparedStatement findAccountNOMStmt;
 
     /**
      * Constructs a new DAO object connected to the specified database.
@@ -63,14 +63,14 @@ public class CatalogDAO {
      * <code>null</code> if there is no such account.
      * @throws CatalogDBException If failed to search for account.
      */
-    public Account findAccountByName(String userName) throws CatalogDBException {
+    public Account findAccountByName(String filenum) throws CatalogDBException {
         String failureMsg = "Could not search for specified account.";
         ResultSet result = null;
         try {
-            findAccountStmt.setString(1, userName);
+            findAccountStmt.setString(1, filenum);
             result = findAccountStmt.executeQuery();
             if (result.next()) {
-                return new Account(userName, result.getString(PASSWORD_COLUMN_NAME), result.getInt(LOGINSTAT_COLUMN_NAME), result.getString(FILENUM_COLUMN_NAME), result.getString(FILEE_COLUMN_NAME),
+                return new Account(result.getString(USER_COLUMN_NAME), result.getString(PASSWORD_COLUMN_NAME), result.getInt(LOGINSTAT_COLUMN_NAME), filenum, result.getString(FILEE_COLUMN_NAME),
                         result.getString(URL_COLUMN_NAME), result.getInt(SIZE_COLUMN_NAME), result.getInt(ACCESS_COLUMN_NAME),
                         result.getInt(READ_COLUMN_NAME), result.getInt(WRITE_COLUMN_NAME), this);
             }
@@ -86,15 +86,14 @@ public class CatalogDAO {
         return null;
     }
     
-    
-    public Account findAccountByNameFile(String fileName) throws CatalogDBException {
+    public Account findAccountByNom(String name) throws CatalogDBException {
         String failureMsg = "Could not search for specified account.";
         ResultSet result = null;
         try {
-            findAccountByFileStmt.setString(1, fileName);
-            result = findAccountStmt.executeQuery();
+            findAccountNOMStmt.setString(1, name);
+            result = findAccountNOMStmt.executeQuery();
             if (result.next()) {
-                return new Account(result.getString(USER_COLUMN_NAME), result.getString(null), result.getInt(0), result.getString(FILENUM_COLUMN_NAME), result.getString(FILEE_COLUMN_NAME),
+                return new Account(name, result.getString(PASSWORD_COLUMN_NAME), result.getInt(LOGINSTAT_COLUMN_NAME), result.getString(FILENUM_COLUMN_NAME), result.getString(FILEE_COLUMN_NAME),
                         result.getString(URL_COLUMN_NAME), result.getInt(SIZE_COLUMN_NAME), result.getInt(ACCESS_COLUMN_NAME),
                         result.getInt(READ_COLUMN_NAME), result.getInt(WRITE_COLUMN_NAME), this);
             }
@@ -109,7 +108,7 @@ public class CatalogDAO {
         }
         return null;
     }
-
+    
     /**
      * Retrieves all existing accounts.
      *
@@ -271,9 +270,9 @@ public class CatalogDAO {
         createAccountStmt = connection.prepareStatement("INSERT INTO "
                 + TABLE_NAME + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ? )");
         findAccountStmt = connection.prepareStatement("SELECT * from "
+                + TABLE_NAME + " WHERE FILENUM = ?");
+        findAccountNOMStmt= connection.prepareStatement("SELECT * from "
                 + TABLE_NAME + " WHERE NAME = ?");
-        findAccountByFileStmt = connection.prepareStatement("SELECT * from "
-                + TABLE_NAME + " WHERE FILENAME = ?");
         findAllAccountsStmt = connection.prepareStatement("SELECT * from "
                 + TABLE_NAME);
         deleteAccountStmt = connection.prepareStatement("DELETE FROM "

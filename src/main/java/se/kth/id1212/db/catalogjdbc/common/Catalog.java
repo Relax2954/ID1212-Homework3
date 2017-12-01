@@ -30,18 +30,17 @@ public interface Catalog extends Remote {
     //logs out from an account
      public void logoutAccount(String name, String password) throws RemoteException, AccountException;
     /**
-     * Returns the account of the specified user, or <code>null</code> if there is no such
-     * account.
-     *
-     * @param userName The user whose account to search for.
-     * @return The account of the specified user, or <code>null</code> if there is no such
-     *         account.
+     * getAccount Returns the account by SEARCHING THE FILENUM OF IT  !!!!!!!
+     * @param filenum
+     * @return 
      * @throws RemoteException  If unable to complete the RMI call.
      * @throws AccountException If unable to search for the account.
      */
-    public AccountDTO getAccount(String name) throws RemoteException, AccountException;
+    public AccountDTO getAccount(String filenum) throws RemoteException, AccountException;
     
-    public  AccountDTO getAccountByFileName(String fileName)  throws RemoteException, AccountException;
+    // * Returns the account by searching for the NAME OF THE ACC of it !!!!!!!
+    public AccountDTO getAcc(String name) throws RemoteException, AccountException;
+    
 
     /**
      * Deletes the specified account, if there is such an account. If there is no

@@ -88,14 +88,14 @@ public class NonBlockingInterpreter implements Runnable {
                         break;
                     case FILEREAD://this lists all files from a specific user, this is NOT NECESSARY ???
                         
-                        acct = catalog.getAccountByFileName(cmdLine.getParameter(0));
+                        //acct = catalog.getAccountByFileName(cmdLine.getParameter(0));
                         if(acct.getRead()==1)
                         outMgr.println(acct.getFileNum() + acct.getFileName() + acct.getUrl() + Integer.toString(acct.getSize())
                                 + Integer.toString(acct.getAccess()) + Integer.toString(acct.getRead()) + Integer.toString(acct.getWrite()));
                         else outMgr.println("File not readable");
                         break;
                     default:
-                        outMgr.println("illegal command");
+                        outMgr.println("Done");
                 }
             } catch (Exception e) {
                 outMgr.println("Operation failed");
