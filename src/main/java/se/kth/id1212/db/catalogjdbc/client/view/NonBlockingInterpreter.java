@@ -76,7 +76,7 @@ public class NonBlockingInterpreter implements Runnable {
                                     + "; WritebyEveryone:" + account.getWrite());
                         }
                         break;
-                    case ADDFILE:
+                    case UPDATEFILE:
                         acct = catalog.getAccount(cmdLine.getParameter(0));
                         catalog.fileadding(acct, Integer.parseInt(cmdLine.getParameter(1)), cmdLine.getParameter(2),
                                 cmdLine.getParameter(3), Integer.parseInt(cmdLine.getParameter(4)), Integer.parseInt(cmdLine.getParameter(5)),

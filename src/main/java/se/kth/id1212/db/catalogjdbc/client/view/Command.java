@@ -24,7 +24,7 @@ public enum Command {
     /**
      * Adds the specified file to the specified account
      */
-    ADDFILE,
+    UPDATEFILE,
     /**
      * Deletes the specified file from the specified account
      */
