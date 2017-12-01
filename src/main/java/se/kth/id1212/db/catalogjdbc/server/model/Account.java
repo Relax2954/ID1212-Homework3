@@ -47,6 +47,7 @@ public class Account implements AccountDTO {
         this.access = access;
         this.read = read;
         this.write = write;
+        this.catalogDB=catalogDB;
     }
 
     /**
@@ -75,8 +76,8 @@ public class Account implements AccountDTO {
      * @param passWord
      * @param catalogDB The DAO used to store updates to the database.
      */
-    public Account(String userName, String passWord, CatalogDAO catalogDB) {
-        this(userName, passWord, 0, 0, null, null, 0, 0, 0, 0, catalogDB);
+    public Account(String userName, String passWord, int filenum, CatalogDAO catalogDB) {
+        this(userName, passWord, 0, filenum, null, null, 0, 0, 0, 0, catalogDB);
     }
 
     /**

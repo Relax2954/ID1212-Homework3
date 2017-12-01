@@ -23,7 +23,7 @@ public interface Catalog extends Remote {
      * @throws RemoteException  If unable to complete the RMI call.
      * @throws AccountException If unable to create the account.
      */
-    public void createAccount(String name, String password) throws RemoteException, AccountException;
+    public void createAccount(String name, String password, int filenum) throws RemoteException, AccountException;
 
     //logins into an already-existant account
     public void loginAccount(String name, String password) throws RemoteException, AccountException;

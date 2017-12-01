@@ -56,14 +56,14 @@ public class Controller extends UnicastRemoteObject implements Catalog {
     }
     
     @Override
-    public synchronized void createAccount(String userName, String passWord) throws AccountException {
+    public synchronized void createAccount(String userName, String passWord, int filenum) throws AccountException {
         String acctExistsMsg = "Account for: " + userName + " already exists";
         String failureMsg = "The acc already exists: " + userName;
         try {
-            if (catalogDb.findAccountByName(userName) != null) {
-                throw new AccountException(acctExistsMsg);
-            }
-            catalogDb.createAccount(new Account(userName, passWord, catalogDb));
+            /*if (catalogDb.findAccountByName(userName) != null) {
+            throw new AccountException(acctExistsMsg);
+            }*/
+            catalogDb.createAccount(new Account(userName, passWord, filenum, catalogDb));
         } catch (Exception e) {
             throw new AccountException(failureMsg, e);
         }

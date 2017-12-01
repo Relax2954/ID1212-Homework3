@@ -56,7 +56,7 @@ public class NonBlockingInterpreter implements Runnable {
                         receivingCmds = false;
                         break;
                     case REGISTER:
-                        catalog.createAccount(cmdLine.getParameter(0), cmdLine.getParameter(1));
+                        catalog.createAccount(cmdLine.getParameter(0), cmdLine.getParameter(1), Integer.parseInt(cmdLine.getParameter(2)));
                         break;
                     case LOGIN:
                         catalog.loginAccount(cmdLine.getParameter(0), cmdLine.getParameter(1));

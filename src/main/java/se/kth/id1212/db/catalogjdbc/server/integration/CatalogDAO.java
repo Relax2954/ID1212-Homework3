@@ -227,8 +227,8 @@ public class CatalogDAO {
         if (!catalogTableExists(connection)) {
             Statement statement = connection.createStatement();
             statement.executeUpdate("CREATE TABLE " + TABLE_NAME
-                    + " (" + USER_COLUMN_NAME + " VARCHAR(32) PRIMARY KEY, " + PASSWORD_COLUMN_NAME + " VARCHAR(32), " + LOGINSTAT_COLUMN_NAME + " FLOAT, "
-                    + FILENUM_COLUMN_NAME + " FLOAT, " + FILEE_COLUMN_NAME + " VARCHAR(32), "
+                    + " (" + USER_COLUMN_NAME + " VARCHAR(32) , " + PASSWORD_COLUMN_NAME + " VARCHAR(32), " + LOGINSTAT_COLUMN_NAME + " FLOAT, "
+                    + FILENUM_COLUMN_NAME + " FLOAT PRIMARY KEY , " + FILEE_COLUMN_NAME + " VARCHAR(32), "
                     + URL_COLUMN_NAME + " VARCHAR(250), " + SIZE_COLUMN_NAME + " FLOAT, " + ACCESS_COLUMN_NAME + " INT, "
                     + READ_COLUMN_NAME + " INT, " + WRITE_COLUMN_NAME + " INT ) ");
 
