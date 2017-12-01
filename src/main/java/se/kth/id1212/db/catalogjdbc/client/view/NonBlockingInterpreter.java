@@ -81,11 +81,14 @@ public class NonBlockingInterpreter implements Runnable {
                         catalog.deleteAccount(acct);
                         break;
                     case LIST:  //NOT FIXED
+                        acct = catalog.getAccount(cmdLine.getParameter(0));
                         List<? extends AccountDTO> accounts = catalog.listAccounts();
                         for (AccountDTO account : accounts) {
+                            if(account.getRead()==1||(acct.getLoginStat()==1 &&account.getUserName().equals(cmdLine.getParameter(0)))){
                             outMgr.println(account.getUserName() + ": FileNum:" + account.getFileNum() + "; Login:" + account.getLoginStat() + "; FileName:" + account.getFileName()
                                     + "; Url:" + account.getUrl() + "; Size:" + account.getSize() + "; Public access:" + account.getAccess() + "; ReadByEveryone:" + account.getRead()
                                     + "; WritebyEveryone:" + account.getWrite());
+                            }
                         }
                         break;
                     case UPDATEFILE:
