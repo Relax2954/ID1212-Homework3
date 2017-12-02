@@ -79,10 +79,9 @@ public class NonBlockingInterpreter implements Runnable {
                         }
                         break;
                     case REGISTER:
-                        // acct = catalog.getAcc(cmdLine.getParameter(0));
-                        //  if (acct.equals(null)|| !acct.getUserName().equals(cmdLine.getParameter(0))){ //this makes sure that nema client je kreiran
+                        if(catalog.getAcc(cmdLine.getParameter(0))==(null))
                         catalog.createAccount(cmdLine.getParameter(0), cmdLine.getParameter(1), cmdLine.getParameter(2));
-                        // }
+                         
                         break;
                     case LOGIN:
                         catalog.loginAccount(cmdLine.getParameter(0), cmdLine.getParameter(1));
