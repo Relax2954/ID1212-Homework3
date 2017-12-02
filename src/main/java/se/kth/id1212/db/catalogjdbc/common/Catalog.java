@@ -65,7 +65,7 @@ public interface Catalog extends Remote {
 
     
     //FILEADDING IS USED FOR UPDATING A FILE
-    public void fileadding(AccountDTO acct, String filenum, String filename, String url, int size, int access, int read, int write) throws RemoteException, RejectedException,
+    public void fileupdating(AccountDTO acct, String filenum, String filename, String url, int size, int access, int read, int write) throws RemoteException, RejectedException,
                                                          AccountException;
     
      /**

@@ -95,7 +95,7 @@ public class NonBlockingInterpreter implements Runnable {
                         acct01= catalog.getAcc(cmdLine.getParameter(0));
                         acct = catalog.getAccount(cmdLine.getParameter(1));
                         if((acct.getUserName().equalsIgnoreCase(acct01.getUserName())&& acct.getLoginStat()==1) || acct.getWrite()==1){
-                        catalog.fileadding(acct, cmdLine.getParameter(2), cmdLine.getParameter(3),
+                        catalog.fileupdating(acct, cmdLine.getParameter(2), cmdLine.getParameter(3),
                                 cmdLine.getParameter(4), Integer.parseInt(cmdLine.getParameter(5)), Integer.parseInt(cmdLine.getParameter(6)),
                                 Integer.parseInt(cmdLine.getParameter(7)), Integer.parseInt(cmdLine.getParameter(8)));
                         }

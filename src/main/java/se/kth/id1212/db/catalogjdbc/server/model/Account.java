@@ -106,7 +106,7 @@ public class Account implements AccountDTO {
          * @throws AccountException If the specified num is negative, or if
          * unable to perform the update.
          */
-    public void fileadding(String filenum, String filename, String url, int size, int access, int read, int write) throws RejectedException {
+    public void fileupdating(String filenum, String filename, String url, int size, int access, int read, int write) throws RejectedException {
         /*if (filenum < 0) {
         throw new RejectedException(
         "Tried to add negative value of filenum, illegal value: " + filenum + "." + accountInfo());

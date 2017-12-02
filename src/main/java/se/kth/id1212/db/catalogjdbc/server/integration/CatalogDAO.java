@@ -35,7 +35,7 @@ public class CatalogDAO {
     private PreparedStatement findAccountStmt;
     private PreparedStatement findAllAccountsStmt;
     private PreparedStatement deleteAccountStmt;
-    private PreparedStatement addFileStmt;
+    private PreparedStatement updateFileStmt;
     private PreparedStatement loginAccountStmt;
     private PreparedStatement findAccountNOMStmt;
     private PreparedStatement deleteFileStmt;
@@ -237,17 +237,17 @@ public class CatalogDAO {
     }
     public void updateAccount(AccountDTO account) throws CatalogDBException {
         try {
-            addFileStmt.setString(1, account.getPassWord());
-            addFileStmt.setInt(2, account.getLoginStat());
-            addFileStmt.setString(3, account.getFileName());
-            addFileStmt.setString(4, account.getUrl());
-            addFileStmt.setInt(5, account.getSize());
-            addFileStmt.setInt(6, account.getAccess());
-            addFileStmt.setInt(7, account.getRead());
-            addFileStmt.setInt(8, account.getWrite());
-            addFileStmt.setString(9, account.getUserName());
-            addFileStmt.setString(10, account.getFileNum());
-            addFileStmt.executeUpdate();
+            updateFileStmt.setString(1, account.getPassWord());
+            updateFileStmt.setInt(2, account.getLoginStat());
+            updateFileStmt.setString(3, account.getFileName());
+            updateFileStmt.setString(4, account.getUrl());
+            updateFileStmt.setInt(5, account.getSize());
+            updateFileStmt.setInt(6, account.getAccess());
+            updateFileStmt.setInt(7, account.getRead());
+            updateFileStmt.setInt(8, account.getWrite());
+            updateFileStmt.setString(9, account.getUserName());
+            updateFileStmt.setString(10, account.getFileNum());
+            updateFileStmt.executeUpdate();
         } catch (SQLException sqle) {
             throw new CatalogDBException("Could not update the account: " + account, sqle);
         }
@@ -312,7 +312,7 @@ public class CatalogDAO {
                 + TABLE_NAME
                 + " WHERE name = ?");
         loginAccountStmt = connection.prepareStatement("UPDATE " + TABLE_NAME + " SET loginstat=?, access=?  WHERE name=? ");
-        addFileStmt = connection.prepareStatement("UPDATE "
+        updateFileStmt = connection.prepareStatement("UPDATE "
                 + TABLE_NAME
                 + " SET  password=?, loginstat=?,  filename=?,  url=?,  size=?,  access=?, "
                 + " readd=?, writee=?  WHERE (name= ? AND filenum=?) ");
