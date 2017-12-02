@@ -81,7 +81,8 @@ public class NonBlockingInterpreter implements Runnable {
                     case REGISTER:
                         if(catalog.getAcc(cmdLine.getParameter(0))==(null))
                         catalog.createAccount(cmdLine.getParameter(0), cmdLine.getParameter(1), cmdLine.getParameter(2));
-                         
+                         else
+                         outMgr.println("Username already used. Choose another one.");
                         break;
                     case LOGIN:
                         catalog.loginAccount(cmdLine.getParameter(0), cmdLine.getParameter(1));
@@ -107,9 +108,12 @@ public class NonBlockingInterpreter implements Runnable {
                         acct01 = catalog.getAcc(cmdLine.getParameter(0));
                         acct = catalog.getAccount(cmdLine.getParameter(1));
                         if ((acct.getUserName().equalsIgnoreCase(acct01.getUserName()) && acct.getLoginStat() == 1) || acct.getWrite() == 1) {
+                            File myfilename = new File("/Users/SasaLekic/Documents/TCPOutput/"+acct.getFileName());
+                            myfilename.renameTo(new File("/Users/SasaLekic/Documents/TCPOutput/"+cmdLine.getParameter(3)));
                             catalog.fileupdating(acct, cmdLine.getParameter(2), cmdLine.getParameter(3),
                                     cmdLine.getParameter(4), Integer.parseInt(cmdLine.getParameter(5)), Integer.parseInt(cmdLine.getParameter(6)),
                                     Integer.parseInt(cmdLine.getParameter(7)), Integer.parseInt(cmdLine.getParameter(8)));
+                            
                         }
                         break;
                     /*!!!!!!! */ case DELETEFILE: //REMEMBER: getAcc is for getting a file by username, while getAccount is by filenum!!!!!
