@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Scanner;
 import se.kth.id1212.db.catalogjdbc.common.Catalog;
 import se.kth.id1212.db.catalogjdbc.common.AccountDTO;
+import se.kth.id1212.db.catalogjdbc.server.tcp.FileServer;
+import se.kth.id1212.db.catalogjdbc.client.tcp.FileClient;
 
 /**
  * Reads and interprets user commands. The command interpreter will run in a
@@ -58,10 +60,12 @@ public class NonBlockingInterpreter implements Runnable {
                     case QUIT:
                         receivingCmds = false;
                         break;
-                    case ADDFILE:
+                    case UPLOADFILE:
+                        
                         acct = catalog.getAcc(cmdLine.getParameter(0));
                         if(acct.getLoginStat()==1){
-                        catalog.addafil(cmdLine.getParameter(0), acct.getPassWord(), cmdLine.getParameter(1), cmdLine.getParameter(2));
+                        catalog.addafil(cmdLine.getParameter(0), acct.getPassWord(), cmdLine.getParameter(1), cmdLine.getParameter(2), cmdLine.getParameter(3));
+                        FileClient.clientTCP(cmdLine.getParameter(2), cmdLine.getParameter(3));
                         }
                         break;
                     case REGISTER:
@@ -76,11 +80,10 @@ public class NonBlockingInterpreter implements Runnable {
                     case LOGOUT:
                         catalog.logoutAccount(cmdLine.getParameter(0), cmdLine.getParameter(1));
                         break;
-                    case DELETE:
-                        acct = catalog.getAccount(cmdLine.getParameter(0));
-                        catalog.deleteAccount(acct);
+                    case UNREGISTER:
+                        catalog.deleteAccount(cmdLine.getParameter(0), cmdLine.getParameter(1));
                         break;
-                    case LIST:  //NOT FIXED
+                    case LIST:  
                         acct = catalog.getAcc(cmdLine.getParameter(0));
                         List<? extends AccountDTO> accounts = catalog.listAccounts();
                         for (AccountDTO account : accounts) {

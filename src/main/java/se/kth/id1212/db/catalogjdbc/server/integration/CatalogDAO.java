@@ -38,6 +38,7 @@ public class CatalogDAO {
     private PreparedStatement updateFileStmt;
     private PreparedStatement loginAccountStmt;
     private PreparedStatement findAccountNOMStmt;
+    private PreparedStatement addFileStmt;
     private PreparedStatement deleteFileStmt;
 
     /**
@@ -141,17 +142,17 @@ public class CatalogDAO {
     public void addafil(AccountDTO account) throws CatalogDBException {
         String failureMsg = "Could not create the file: " + account;
         try {
-            createAccountStmt.setString(1, account.getUserName());
-            createAccountStmt.setString(2, account.getPassWord());
-            createAccountStmt.setInt(3, 1);
-            createAccountStmt.setString(4, account.getFileNum());
-            createAccountStmt.setString(5, account.getFileName());
-            createAccountStmt.setString(6, account.getUrl());
-            createAccountStmt.setInt(7, account.getSize());
-            createAccountStmt.setInt(8, account.getAccess());
-            createAccountStmt.setInt(9, account.getRead());
-            createAccountStmt.setInt(10, account.getWrite());
-            int rows = createAccountStmt.executeUpdate();
+            addFileStmt.setString(1, account.getUserName());
+            addFileStmt.setString(2, account.getPassWord());
+            addFileStmt.setInt(3, 1);
+            addFileStmt.setString(4, account.getFileNum());
+            addFileStmt.setString(5, account.getFileName());
+            addFileStmt.setString(6, account.getUrl());
+            addFileStmt.setInt(7, account.getSize());
+            addFileStmt.setInt(8, account.getAccess());
+            addFileStmt.setInt(9, account.getRead());
+            addFileStmt.setInt(10, account.getWrite());
+            int rows = addFileStmt.executeUpdate();
             if (rows != 1) {
                 throw new CatalogDBException(failureMsg);
             }
@@ -181,14 +182,22 @@ public class CatalogDAO {
             throw new CatalogDBException(failureMsg, sqle);
         }
     }
-
-    public void loginAccount(AccountDTO account, String pass) throws CatalogDBException, SQLException {
+    
+        public void loginAccount(AccountDTO account, String pass) throws CatalogDBException, SQLException {
         String failureMsg = "Could not login intoo account: " + account;
         if (account.getPassWord().equals(pass)) {
             loginAccountStmt.setInt(1, 1);
             loginAccountStmt.setInt(2, 1);
             loginAccountStmt.setString(3, account.getUserName());
             loginAccountStmt.executeUpdate();
+        }
+    }
+
+    public void deleteAccount(AccountDTO account, String pass) throws CatalogDBException, SQLException {
+        String failureMsg = "Could delete account: " + account;
+        if (account.getPassWord().equals(pass)) {
+            deleteAccountStmt.setString(1, account.getUserName());
+            deleteAccountStmt.executeUpdate();
         }
     }
 
@@ -200,23 +209,6 @@ public class CatalogDAO {
         loginAccountStmt.executeUpdate();
     }
 
-    /**
-     * Deletes the specified account.
-     *
-     * @param account The account to delete.
-     * @return <code>true</code> if the specified user had an account and it was
-     * deleted, <code>false</code> if the user did not have an account and
-     * nothing was done.
-     * @throws CatalogDBException If unable to delete the specified account.
-     */
-    public void deleteAccount(AccountDTO account) throws CatalogDBException {
-        try {
-            deleteAccountStmt.setString(1, account.getUserName());
-            deleteAccountStmt.executeUpdate();
-        } catch (SQLException sqle) {
-            throw new CatalogDBException("Could not delete the account: " + account, sqle);
-        }
-    }
 
     /**
      * Updates the specified account to the values of the field sin the
@@ -301,6 +293,8 @@ public class CatalogDAO {
 
     private void prepareStatements(Connection connection) throws SQLException {
         createAccountStmt = connection.prepareStatement("INSERT INTO "
+                + TABLE_NAME + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ? )");
+        addFileStmt = connection.prepareStatement("INSERT INTO "
                 + TABLE_NAME + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ? )");
         findAccountStmt = connection.prepareStatement("SELECT * from "
                 + TABLE_NAME + " WHERE FILENUM = ?");

@@ -56,14 +56,14 @@ public class Controller extends UnicastRemoteObject implements Catalog {
     }
     
     @Override
-    public synchronized void addafil(String userName, String passWord, String filenum, String url) throws AccountException {
+    public synchronized void addafil(String userName, String passWord, String filenum, String url, String filename) throws AccountException {
         String acctExistsMsg = "Account for: " + userName + " already exists";
         String failureMsg = "The acc already exists: " + userName;
         try {
             /*if (catalogDb.findAccountByName(userName) != null) {
             throw new AccountException(acctExistsMsg);
             }*/
-            catalogDb.addafil(new Account(userName, passWord, filenum, url, catalogDb));
+            catalogDb.addafil(new Account(userName, passWord, filenum, url, filename, catalogDb));
         } catch (Exception e) {
             throw new AccountException(failureMsg, e);
         }
@@ -82,7 +82,17 @@ public class Controller extends UnicastRemoteObject implements Catalog {
             throw new AccountException(failureMsg, e);
         }
     }
-
+    
+    
+@Override
+    public synchronized void deleteAccount(String userName, String passWord) throws AccountException{
+        String failureMsg = "Could unregister " + userName;
+        try {
+            catalogDb.deleteAccount(getAcc(userName), passWord);
+        }catch (Exception e) {
+            throw new AccountException(failureMsg, e);
+        }
+    }
     
     
     @Override
@@ -111,14 +121,6 @@ public class Controller extends UnicastRemoteObject implements Catalog {
         }
     }
 
-    @Override
-    public synchronized void deleteAccount(AccountDTO account) throws AccountException {
-        try {
-            catalogDb.deleteAccount(account);
-        } catch (Exception e) {
-            throw new AccountException("Could not delete account: " + account, e);
-        }
-    }
 
     @Override //this is actually used for UPDATING A FILE
     public synchronized void fileupdating(AccountDTO acctDTO, String filenum, String filename, String url, int size, int access, int read, int write) throws RejectedException, AccountException {

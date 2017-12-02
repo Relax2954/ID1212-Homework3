@@ -20,10 +20,10 @@ public enum Command {
     /**
      * Deletes the specified account.
      */
-    DELETE,
+    UNREGISTER,
     
     //ADDS A SPECIFIC FILE
-    ADDFILE,
+    UPLOADFILE,
     /**
      * Adds the specified file to the specified account
      */
