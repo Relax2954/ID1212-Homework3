@@ -92,7 +92,7 @@ public class NonBlockingInterpreter implements Runnable {
                         acct01 = catalog.getAcc(cmdLine.getParameter(0));
                         acct = catalog.getAccount(cmdLine.getParameter(1));
                         remotnanodica=catalog.RgetUsername(myIdAtServer);
-                        if(remotnanodica.equalsIgnoreCase(acct.getUserName())){
+                        if(remotnanodica.equalsIgnoreCase(acct01.getUserName())){
                         if ((acct.getUserName().equalsIgnoreCase(acct01.getUserName()) && acct.getLoginStat() == 1) || acct.getRead() == 1) {
                             FileClientDownload.clientTCPDownload(cmdLine.getParameter(2), cmdLine.getParameter(3));
                         }
@@ -117,11 +117,15 @@ public class NonBlockingInterpreter implements Runnable {
                             System.out.println("Invalid username and/or password");
                         break;
                     case LOGOUT:
+                        acct = catalog.getAcc(cmdLine.getParameter(0));
+                        remotnanodica=catalog.RgetUsername(myIdAtServer);
+                        if(remotnanodica.equalsIgnoreCase(acct.getUserName())){
                         catalog.logoutAccount(cmdLine.getParameter(0), cmdLine.getParameter(1));
                         receivingCmds = false;
                         catalog.Rlogout(myIdAtServer);
                         boolean forceUnexport = false;
                         UnicastRemoteObject.unexportObject(myRemoteObj, forceUnexport);
+                        }
                         break;
                     case UNREGISTER:
                         acct = catalog.getAcc(cmdLine.getParameter(0));
@@ -132,6 +136,8 @@ public class NonBlockingInterpreter implements Runnable {
                         break;
                     case LIST:
                         acct = catalog.getAcc(cmdLine.getParameter(0));
+                        remotnanodica=catalog.RgetUsername(myIdAtServer);
+                        if(remotnanodica.equalsIgnoreCase(acct.getUserName())){
                         List<? extends AccountDTO> accounts = catalog.listAccounts();
                         for (AccountDTO account : accounts) {
                             if (account.getRead() == 1 || (acct.getLoginStat() == 1 && account.getUserName().equals(cmdLine.getParameter(0)))) {
@@ -140,12 +146,13 @@ public class NonBlockingInterpreter implements Runnable {
                                         + "; WritebyEveryone:" + account.getWrite());
                             }
                         }
+                        }
                         break;
                     case UPDATEFILE:
                         acct01 = catalog.getAcc(cmdLine.getParameter(0));
                         acct = catalog.getAccount(cmdLine.getParameter(1));
                         remotnanodica=catalog.RgetUsername(myIdAtServer);
-                        if(remotnanodica.equalsIgnoreCase(acct.getUserName())){
+                        if(remotnanodica.equalsIgnoreCase(acct01.getUserName())){
                         if ((acct.getUserName().equalsIgnoreCase(acct01.getUserName()) && acct.getLoginStat() == 1) || acct.getWrite() == 1) {
                             File myfilename = new File("/Users/SasaLekic/Documents/TCPOutput/" + acct.getFileName());
                             myfilename.renameTo(new File("/Users/SasaLekic/Documents/TCPOutput/" + cmdLine.getParameter(3)));
