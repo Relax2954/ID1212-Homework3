@@ -17,7 +17,7 @@ import se.kth.id1212.db.catalogjdbc.common.MessageException;
 public class Participant {
     private static final String USERNAME_DELIMETER = ": ";
     private static final String DEFAULT_USERNAME = "anonymous";
-    private final long id;
+    private final int id;
     private final CatalogClient remoteNode;
     private final ParticipantManager participantMgr;
     private String username;
@@ -30,7 +30,7 @@ public class Participant {
      * @param remoteNode The remote endpoint of the newly created instance.
      * @param mgr        The only existing participant manager.
      */
-    public Participant(long id, String username, CatalogClient remoteNode, ParticipantManager mgr) {
+    public Participant(int id, String username, CatalogClient remoteNode, ParticipantManager mgr) {
         this.id = id;
         this.username = username;
         this.remoteNode = remoteNode;
@@ -44,7 +44,7 @@ public class Participant {
      * @param remoteNode The remote endpoint of the newly created instance.
      * @param mgr        The only existing participant manager.
      */
-    public Participant(long id, CatalogClient remoteNode, ParticipantManager mgr) {
+    public Participant(int id, CatalogClient remoteNode, ParticipantManager mgr) {
         this(id, DEFAULT_USERNAME, remoteNode, mgr);
     }
 
@@ -83,6 +83,12 @@ public class Participant {
     public String RgetUsername(){
     return this.username;
     }
+    public CatalogClient RgetClientHandler()
+    {
+        return this.remoteNode;
+    }
+    
+    
 
     /**
      * Inform other participants that this participant is leaving the conversation.

@@ -15,7 +15,7 @@ public class Account implements AccountDTO {
     private String fileName;
     private String url;
     private int size;
-    private int access;
+    private int access; //SHOWS IF THE USER WANTS TO BE NOTIFIED IF THE FILE IS ACCESSED
     private int read;
     private int write;
     private transient CatalogDAO catalogDB;

@@ -4,6 +4,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
 import se.kth.id1212.db.catalogjdbc.server.model.AccountException;
+import se.kth.id1212.db.catalogjdbc.server.model.Participant;
 import se.kth.id1212.db.catalogjdbc.server.model.RejectedException;
 
 /**
@@ -15,14 +16,17 @@ public interface Catalog extends Remote {
      */
     public static final String CATALOG_NAME_IN_REGISTRY = "catalog";
     
-    long Rlogin(CatalogClient remoteNode, Credentials credentials) throws RemoteException;
+    int Rlogin(CatalogClient remoteNode, Credentials credentials) throws RemoteException;
     
-    void RchangeNickname(long id, String username) throws RemoteException;
+    void RchangeNickname(int id, String username) throws RemoteException;
     
-    void RnotifyMsg(long id, String msg) throws RemoteException;
-    public String RgetUsername(long id) throws RemoteException;
+    void RnotifyMsg(int id, String msg) throws RemoteException;
+    public String RgetUsername(int id) throws RemoteException;
+    public int RgetID(String userName) throws RemoteException;
+    //public Participant RGetParticipant(int id) throws RemoteException;
+    public CatalogClient RgetRemoteNode(int id)  throws RemoteException;
     
-    void Rlogout(long id) throws RemoteException;
+    void Rlogout(int id) throws RemoteException;
 
     
 

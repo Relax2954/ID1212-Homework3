@@ -30,11 +30,13 @@ public class NonBlockingInterpreter implements Runnable {
     private final ThreadSafeStdOut outMgr = new ThreadSafeStdOut();
     private Catalog catalog;
     private final CatalogClient myRemoteObj;
-    private long myIdAtServer;
+    private final CatalogClient thatRemoteObj;
+    private int myIdAtServer;
     private boolean receivingCmds = false;
 
     public NonBlockingInterpreter() throws RemoteException {
-        myRemoteObj = new ConsoleOutput();
+        myRemoteObj = new ConsoleOutput(); //the current client
+        thatRemoteObj= new ConsoleOutput(); //the client to be notified of something
     }
 
     /**
@@ -83,7 +85,7 @@ public class NonBlockingInterpreter implements Runnable {
                         if (acct.getLoginStat() == 1) {
                             File myfilesize = new File(cmdLine.getParameter(2));
                             int fileSizeInBytes = (int) myfilesize.length();
-                            catalog.addafil(cmdLine.getParameter(0), acct.getPassWord(), cmdLine.getParameter(1), cmdLine.getParameter(2), cmdLine.getParameter(3), 10);
+                            catalog.addafil(cmdLine.getParameter(0), acct.getPassWord(), cmdLine.getParameter(1), cmdLine.getParameter(2), cmdLine.getParameter(3), fileSizeInBytes);
                             FileClient.clientTCP(cmdLine.getParameter(2), cmdLine.getParameter(3));
                         }
                         }
@@ -151,7 +153,11 @@ public class NonBlockingInterpreter implements Runnable {
                     case UPDATEFILE:
                         acct01 = catalog.getAcc(cmdLine.getParameter(0));
                         acct = catalog.getAccount(cmdLine.getParameter(1));
+                        String accUserName=acct.getUserName();
                         remotnanodica=catalog.RgetUsername(myIdAtServer);
+                        int OnaNodicaID=catalog.RgetID(accUserName);  //GETS THE ID OF THE CLIENT THAT IS TO BE NOTIFIED
+                        CatalogClient toBeNotified=catalog.RgetRemoteNode(OnaNodicaID); 
+                        int doesnotify=acct.getAccess();
                         if(remotnanodica.equalsIgnoreCase(acct01.getUserName())){
                         if ((acct.getUserName().equalsIgnoreCase(acct01.getUserName()) && acct.getLoginStat() == 1) || acct.getWrite() == 1) {
                             File myfilename = new File("/Users/SasaLekic/Documents/TCPOutput/" + acct.getFileName());
@@ -159,7 +165,7 @@ public class NonBlockingInterpreter implements Runnable {
                             catalog.fileupdating(acct, cmdLine.getParameter(2), cmdLine.getParameter(3),
                                     cmdLine.getParameter(4), Integer.parseInt(cmdLine.getParameter(5)), Integer.parseInt(cmdLine.getParameter(6)),
                                     Integer.parseInt(cmdLine.getParameter(7)), Integer.parseInt(cmdLine.getParameter(8)));
-
+                             
                         }
                         }
                         break;

@@ -18,13 +18,15 @@ import java.util.Random;
  */
 public class ParticipantManager {
     private final Random idGenerator = new Random();
-    private final Map<Long, Participant> participants = Collections.synchronizedMap(new HashMap<>());
+    private final Map<Integer, Participant> participants = Collections.synchronizedMap(new HashMap<>());
+    private final Map<String, Integer> easyUsernameFinder = Collections.synchronizedMap(new HashMap<>());
 
-    public long createParticipant(CatalogClient remoteNode, Credentials credentials) {
-        long participantId = idGenerator.nextLong();
+    public int createParticipant(CatalogClient remoteNode, Credentials credentials) {
+        int participantId = idGenerator.nextInt();
         Participant newParticipant = new Participant(participantId, credentials.getUsername(),
                                                      remoteNode, this);
         participants.put(participantId, newParticipant);
+        easyUsernameFinder.put(credentials.getUsername(), participantId);
         return participantId;
     }
 
@@ -37,8 +39,12 @@ public class ParticipantManager {
      * @return The participant with the specified id, or <code>null</code> if there is no such
      *         participant.
      */
-    public Participant findParticipant(long id) {
+    public Participant findParticipant(int id) {
         return participants.get(id);
+    }
+    
+    public int findParticipantByUserName(String userName) {
+        return easyUsernameFinder.get(userName);
     }
 
     /**
@@ -47,7 +53,7 @@ public class ParticipantManager {
      *
      * @param id The id of the participant that shall be removed.
      */
-    public void removeParticipant(long id) {
+    public void removeParticipant(int id) {
         participants.remove(id);
     }
 

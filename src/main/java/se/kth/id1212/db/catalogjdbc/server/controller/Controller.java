@@ -12,6 +12,7 @@ import se.kth.id1212.db.catalogjdbc.server.model.AccountException;
 import se.kth.id1212.db.catalogjdbc.server.model.RejectedException;
 import se.kth.id1212.db.catalogjdbc.common.Credentials;
 import se.kth.id1212.db.catalogjdbc.common.CatalogClient;
+import se.kth.id1212.db.catalogjdbc.server.model.Participant;
 import se.kth.id1212.db.catalogjdbc.server.model.ParticipantManager;
 
 
@@ -24,31 +25,47 @@ public class Controller extends UnicastRemoteObject implements Catalog {
     private final ParticipantManager participantManager = new ParticipantManager();
     
         @Override
-    public long Rlogin(CatalogClient remoteNode, Credentials credentials) {
-        long participantId = participantManager.createParticipant(remoteNode, credentials);
+    public int Rlogin(CatalogClient remoteNode, Credentials credentials) {
+        int participantId = participantManager.createParticipant(remoteNode, credentials);
         return participantId;
     }
 
     @Override
-    public void RnotifyMsg(long id, String msg) {
+    public void RnotifyMsg(int id, String msg) {
        // participantManager.findParticipant(id).broadcast(msg);
     }
 
      @Override
-    public String RgetUsername(long id) throws RemoteException {
+    public String RgetUsername(int id) throws RemoteException {
        return participantManager.findParticipant(id).RgetUsername();
     }
     
+     @Override
+    public CatalogClient RgetRemoteNode(int id) throws RemoteException {
+       return participantManager.findParticipant(id).RgetClientHandler(); //Remote node
+    }
+    
+    
     @Override
-    public void Rlogout(long id) {
+    public int RgetID(String userName) throws RemoteException {
+       return participantManager.findParticipantByUserName(userName);
+    }
+    
+    @Override
+    public void Rlogout(int id) {
         participantManager.findParticipant(id).Rlogout();
         participantManager.removeParticipant(id);
     }
 
     @Override
-    public void RchangeNickname(long id, String username) throws RemoteException {
+    public void RchangeNickname(int id, String username) throws RemoteException {
         participantManager.findParticipant(id).changeUsername(username);
     }
+    
+    /*@Override
+    public Participant RGetParticipant(int id) throws RemoteException {
+    return participantManager.findParticipant(id);
+    }*/
 
     public Controller(String datasource, String dbms) throws RemoteException, CatalogDBException {
         super();
