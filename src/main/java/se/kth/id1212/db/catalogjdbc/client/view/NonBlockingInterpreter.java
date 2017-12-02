@@ -3,7 +3,14 @@ package se.kth.id1212.db.catalogjdbc.client.view;
 import java.io.File;
 import java.util.List;
 import java.util.Scanner;
+import java.net.MalformedURLException;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import se.kth.id1212.db.catalogjdbc.common.Catalog;
+import se.kth.id1212.db.catalogjdbc.common.CatalogClient;
+import se.kth.id1212.db.catalogjdbc.common.Credentials;
 import se.kth.id1212.db.catalogjdbc.common.AccountDTO;
 import se.kth.id1212.db.catalogjdbc.server.tcp.FileServer;
 import se.kth.id1212.db.catalogjdbc.client.tcp.FileClient;
@@ -22,7 +29,13 @@ public class NonBlockingInterpreter implements Runnable {
     private final Scanner console = new Scanner(System.in);
     private final ThreadSafeStdOut outMgr = new ThreadSafeStdOut();
     private Catalog catalog;
+    private final CatalogClient myRemoteObj;
+    private long myIdAtServer;
     private boolean receivingCmds = false;
+
+    public NonBlockingInterpreter() throws RemoteException {
+        myRemoteObj = new ConsoleOutput();
+    }
 
     /**
      * Starts the interpreter. The interpreter will be waiting for user input
@@ -47,6 +60,7 @@ public class NonBlockingInterpreter implements Runnable {
     public void run() {
         AccountDTO acct = null;
         AccountDTO acct01 = null;
+        String remotnanodica=null;
         while (receivingCmds) {
             try {
                 CmdLine cmdLine = new CmdLine(readNextLine());
@@ -59,39 +73,62 @@ public class NonBlockingInterpreter implements Runnable {
                             System.out.println(command.toString().toLowerCase());
                         }
                         break;
-                    case QUIT:
+                        /*case QUIT:
                         receivingCmds = false;
-                        break;
+                    break;*/                   
                     case UPLOADFILE:
                         acct = catalog.getAcc(cmdLine.getParameter(0));
+                        remotnanodica=catalog.RgetUsername(myIdAtServer);
+                        if(remotnanodica.equalsIgnoreCase(acct.getUserName())){
                         if (acct.getLoginStat() == 1) {
                             File myfilesize = new File(cmdLine.getParameter(2));
                             int fileSizeInBytes = (int) myfilesize.length();
-                            catalog.addafil(cmdLine.getParameter(0), acct.getPassWord(), cmdLine.getParameter(1), cmdLine.getParameter(2), cmdLine.getParameter(3), fileSizeInBytes);
+                            catalog.addafil(cmdLine.getParameter(0), acct.getPassWord(), cmdLine.getParameter(1), cmdLine.getParameter(2), cmdLine.getParameter(3), 10);
                             FileClient.clientTCP(cmdLine.getParameter(2), cmdLine.getParameter(3));
+                        }
                         }
                         break;
                     case DOWNLOADFILE:
                         acct01 = catalog.getAcc(cmdLine.getParameter(0));
                         acct = catalog.getAccount(cmdLine.getParameter(1));
+                        remotnanodica=catalog.RgetUsername(myIdAtServer);
+                        if(remotnanodica.equalsIgnoreCase(acct.getUserName())){
                         if ((acct.getUserName().equalsIgnoreCase(acct01.getUserName()) && acct.getLoginStat() == 1) || acct.getRead() == 1) {
                             FileClientDownload.clientTCPDownload(cmdLine.getParameter(2), cmdLine.getParameter(3));
                         }
+                        }
                         break;
                     case REGISTER:
-                        if(catalog.getAcc(cmdLine.getParameter(0))==(null))
-                        catalog.createAccount(cmdLine.getParameter(0), cmdLine.getParameter(1), cmdLine.getParameter(2));
-                         else
-                         outMgr.println("Username already used. Choose another one.");
+                        if (catalog.getAcc(cmdLine.getParameter(0)) == (null)) {
+                            catalog.createAccount(cmdLine.getParameter(0), cmdLine.getParameter(1), cmdLine.getParameter(2));
+                        } else {
+                            outMgr.println("Username already used. Choose another one.");
+                        }
                         break;
                     case LOGIN:
                         catalog.loginAccount(cmdLine.getParameter(0), cmdLine.getParameter(1));
+                        acct = catalog.getAcc(cmdLine.getParameter(0));
+                        if(acct.getLoginStat()==1){
+                        myIdAtServer = catalog.Rlogin(myRemoteObj,
+                                    new Credentials(cmdLine.getParameter(0),cmdLine.getParameter(1)));
+                        lookupServer(cmdLine.getParameter(2));
+                        }
+                        else
+                            System.out.println("Invalid username and/or password");
                         break;
                     case LOGOUT:
                         catalog.logoutAccount(cmdLine.getParameter(0), cmdLine.getParameter(1));
+                        receivingCmds = false;
+                        catalog.Rlogout(myIdAtServer);
+                        boolean forceUnexport = false;
+                        UnicastRemoteObject.unexportObject(myRemoteObj, forceUnexport);
                         break;
                     case UNREGISTER:
+                        acct = catalog.getAcc(cmdLine.getParameter(0));
+                        remotnanodica=catalog.RgetUsername(myIdAtServer);
+                        if(remotnanodica.equalsIgnoreCase(acct.getUserName())){
                         catalog.deleteAccount(cmdLine.getParameter(0), cmdLine.getParameter(1));
+                        }
                         break;
                     case LIST:
                         acct = catalog.getAcc(cmdLine.getParameter(0));
@@ -107,18 +144,24 @@ public class NonBlockingInterpreter implements Runnable {
                     case UPDATEFILE:
                         acct01 = catalog.getAcc(cmdLine.getParameter(0));
                         acct = catalog.getAccount(cmdLine.getParameter(1));
+                        remotnanodica=catalog.RgetUsername(myIdAtServer);
+                        if(remotnanodica.equalsIgnoreCase(acct.getUserName())){
                         if ((acct.getUserName().equalsIgnoreCase(acct01.getUserName()) && acct.getLoginStat() == 1) || acct.getWrite() == 1) {
-                            File myfilename = new File("/Users/SasaLekic/Documents/TCPOutput/"+acct.getFileName());
-                            myfilename.renameTo(new File("/Users/SasaLekic/Documents/TCPOutput/"+cmdLine.getParameter(3)));
+                            File myfilename = new File("/Users/SasaLekic/Documents/TCPOutput/" + acct.getFileName());
+                            myfilename.renameTo(new File("/Users/SasaLekic/Documents/TCPOutput/" + cmdLine.getParameter(3)));
                             catalog.fileupdating(acct, cmdLine.getParameter(2), cmdLine.getParameter(3),
                                     cmdLine.getParameter(4), Integer.parseInt(cmdLine.getParameter(5)), Integer.parseInt(cmdLine.getParameter(6)),
                                     Integer.parseInt(cmdLine.getParameter(7)), Integer.parseInt(cmdLine.getParameter(8)));
-                            
+
+                        }
                         }
                         break;
                     /*!!!!!!! */ case DELETEFILE: //REMEMBER: getAcc is for getting a file by username, while getAccount is by filenum!!!!!
                         acct = catalog.getAcc(cmdLine.getParameter(0));
+                        remotnanodica=catalog.RgetUsername(myIdAtServer);
+                        if(remotnanodica.equalsIgnoreCase(acct.getUserName())){
                         catalog.filedelete(acct, cmdLine.getParameter(1));
+                        }
                         break;
                     case FILEREAD://this lists all files from a specific user, this is NOT NECESSARY ???
 
@@ -141,8 +184,26 @@ public class NonBlockingInterpreter implements Runnable {
         }
     }
 
+    private void lookupServer(String host) throws NotBoundException, MalformedURLException,
+            RemoteException {
+        catalog = (Catalog) Naming.lookup(
+                "//" + host + "/" + Catalog.CATALOG_NAME_IN_REGISTRY);
+    }
+
     private String readNextLine() {
         outMgr.print(PROMPT);
         return console.nextLine();
     }
+
+    private class ConsoleOutput extends UnicastRemoteObject implements CatalogClient {
+
+        public ConsoleOutput() throws RemoteException {
+        }
+
+        @Override
+        public void RrecvMsg(String msg) {
+            outMgr.println((String) msg);
+        }
+    }
+
 }

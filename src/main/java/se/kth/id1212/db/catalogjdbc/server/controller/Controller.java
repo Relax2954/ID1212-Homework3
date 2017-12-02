@@ -10,6 +10,10 @@ import se.kth.id1212.db.catalogjdbc.server.model.Account;
 import se.kth.id1212.db.catalogjdbc.common.AccountDTO;
 import se.kth.id1212.db.catalogjdbc.server.model.AccountException;
 import se.kth.id1212.db.catalogjdbc.server.model.RejectedException;
+import se.kth.id1212.db.catalogjdbc.common.Credentials;
+import se.kth.id1212.db.catalogjdbc.common.CatalogClient;
+import se.kth.id1212.db.catalogjdbc.server.model.ParticipantManager;
+
 
 /**
  * Implementations of the catalog's remote methods, this is the only server class that can be called
@@ -17,6 +21,34 @@ import se.kth.id1212.db.catalogjdbc.server.model.RejectedException;
  */
 public class Controller extends UnicastRemoteObject implements Catalog {
     private final CatalogDAO catalogDb;
+    private final ParticipantManager participantManager = new ParticipantManager();
+    
+        @Override
+    public long Rlogin(CatalogClient remoteNode, Credentials credentials) {
+        long participantId = participantManager.createParticipant(remoteNode, credentials);
+        return participantId;
+    }
+
+    @Override
+    public void RnotifyMsg(long id, String msg) {
+       // participantManager.findParticipant(id).broadcast(msg);
+    }
+
+     @Override
+    public String RgetUsername(long id) throws RemoteException {
+       return participantManager.findParticipant(id).RgetUsername();
+    }
+    
+    @Override
+    public void Rlogout(long id) {
+        participantManager.findParticipant(id).Rlogout();
+        participantManager.removeParticipant(id);
+    }
+
+    @Override
+    public void RchangeNickname(long id, String username) throws RemoteException {
+        participantManager.findParticipant(id).changeUsername(username);
+    }
 
     public Controller(String datasource, String dbms) throws RemoteException, CatalogDBException {
         super();

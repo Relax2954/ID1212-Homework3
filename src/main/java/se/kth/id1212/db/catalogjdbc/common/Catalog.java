@@ -15,6 +15,18 @@ public interface Catalog extends Remote {
      */
     public static final String CATALOG_NAME_IN_REGISTRY = "catalog";
     
+    long Rlogin(CatalogClient remoteNode, Credentials credentials) throws RemoteException;
+    
+    void RchangeNickname(long id, String username) throws RemoteException;
+    
+    void RnotifyMsg(long id, String msg) throws RemoteException;
+    public String RgetUsername(long id) throws RemoteException;
+    
+    void Rlogout(long id) throws RemoteException;
+
+    
+
+    
     /**
      * Creates an account with the specified name and the balance zero.
      *
@@ -27,7 +39,7 @@ public interface Catalog extends Remote {
     public void createAccount(String name, String password, String filenum) throws RemoteException, AccountException;
     public void deleteAccount(String name, String password) throws RemoteException, AccountException;
     //adding a file
-    public void addafil(String name, String password, String filenum, String url, String filename, int size) throws RemoteException, AccountException;
+    public void addafil(String name, String password, String filenum, String url, String filename, int size ) throws RemoteException, AccountException;
     //logins into an already-existant account
     public void loginAccount(String name, String password) throws RemoteException, AccountException;
     //logs out from an account
