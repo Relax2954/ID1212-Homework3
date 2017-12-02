@@ -24,8 +24,10 @@ public enum Command {
     
     //ADDS A SPECIFIC FILE
     UPLOADFILE,
+    //DOWNLOADS A FILE
+    DOWNLOADFILE,
     /**
-     * Adds the specified file to the specified account
+     * UPDATES the specified file
      */
     UPDATEFILE,
     /**

@@ -56,14 +56,14 @@ public class Controller extends UnicastRemoteObject implements Catalog {
     }
     
     @Override
-    public synchronized void addafil(String userName, String passWord, String filenum, String url, String filename) throws AccountException {
+    public synchronized void addafil(String userName, String passWord, String filenum, String url, String filename, int size) throws AccountException {
         String acctExistsMsg = "Account for: " + userName + " already exists";
         String failureMsg = "The acc already exists: " + userName;
         try {
             /*if (catalogDb.findAccountByName(userName) != null) {
             throw new AccountException(acctExistsMsg);
             }*/
-            catalogDb.addafil(new Account(userName, passWord, filenum, url, filename, catalogDb));
+            catalogDb.addafil(new Account(userName, passWord, filenum, url, filename, size, catalogDb));
         } catch (Exception e) {
             throw new AccountException(failureMsg, e);
         }

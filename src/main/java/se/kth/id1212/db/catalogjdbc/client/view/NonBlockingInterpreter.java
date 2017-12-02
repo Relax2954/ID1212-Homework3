@@ -1,11 +1,13 @@
 package se.kth.id1212.db.catalogjdbc.client.view;
 
+import java.io.File;
 import java.util.List;
 import java.util.Scanner;
 import se.kth.id1212.db.catalogjdbc.common.Catalog;
 import se.kth.id1212.db.catalogjdbc.common.AccountDTO;
 import se.kth.id1212.db.catalogjdbc.server.tcp.FileServer;
 import se.kth.id1212.db.catalogjdbc.client.tcp.FileClient;
+import se.kth.id1212.db.catalogjdbc.client.tcp.FileClientDownload;
 
 /**
  * Reads and interprets user commands. The command interpreter will run in a
@@ -61,18 +63,26 @@ public class NonBlockingInterpreter implements Runnable {
                         receivingCmds = false;
                         break;
                     case UPLOADFILE:
-                        
                         acct = catalog.getAcc(cmdLine.getParameter(0));
-                        if(acct.getLoginStat()==1){
-                        catalog.addafil(cmdLine.getParameter(0), acct.getPassWord(), cmdLine.getParameter(1), cmdLine.getParameter(2), cmdLine.getParameter(3));
-                        FileClient.clientTCP(cmdLine.getParameter(2), cmdLine.getParameter(3));
+                        if (acct.getLoginStat() == 1) {
+                            File myfilesize = new File(cmdLine.getParameter(2));
+                            int fileSizeInBytes = (int) myfilesize.length();
+                            catalog.addafil(cmdLine.getParameter(0), acct.getPassWord(), cmdLine.getParameter(1), cmdLine.getParameter(2), cmdLine.getParameter(3), fileSizeInBytes);
+                            FileClient.clientTCP(cmdLine.getParameter(2), cmdLine.getParameter(3));
+                        }
+                        break;
+                    case DOWNLOADFILE:
+                        acct01 = catalog.getAcc(cmdLine.getParameter(0));
+                        acct = catalog.getAccount(cmdLine.getParameter(1));
+                        if ((acct.getUserName().equalsIgnoreCase(acct01.getUserName()) && acct.getLoginStat() == 1) || acct.getRead() == 1) {
+                            FileClientDownload.clientTCPDownload(cmdLine.getParameter(2), cmdLine.getParameter(3));
                         }
                         break;
                     case REGISTER:
-                       // acct = catalog.getAcc(cmdLine.getParameter(0));
-                      //  if (acct.equals(null)|| !acct.getUserName().equals(cmdLine.getParameter(0))){ //this makes sure that nema client je kreiran
+                        // acct = catalog.getAcc(cmdLine.getParameter(0));
+                        //  if (acct.equals(null)|| !acct.getUserName().equals(cmdLine.getParameter(0))){ //this makes sure that nema client je kreiran
                         catalog.createAccount(cmdLine.getParameter(0), cmdLine.getParameter(1), cmdLine.getParameter(2));
-                       // }
+                        // }
                         break;
                     case LOGIN:
                         catalog.loginAccount(cmdLine.getParameter(0), cmdLine.getParameter(1));
@@ -83,27 +93,27 @@ public class NonBlockingInterpreter implements Runnable {
                     case UNREGISTER:
                         catalog.deleteAccount(cmdLine.getParameter(0), cmdLine.getParameter(1));
                         break;
-                    case LIST:  
+                    case LIST:
                         acct = catalog.getAcc(cmdLine.getParameter(0));
                         List<? extends AccountDTO> accounts = catalog.listAccounts();
                         for (AccountDTO account : accounts) {
-                            if(account.getRead()==1||(acct.getLoginStat()==1 &&account.getUserName().equals(cmdLine.getParameter(0)))){
-                            outMgr.println(account.getUserName() + ": FileNum:" + account.getFileNum() + "; Login:" + account.getLoginStat() + "; FileName:" + account.getFileName()
-                                    + "; Url:" + account.getUrl() + "; Size:" + account.getSize() + "; Public access:" + account.getAccess() + "; ReadByEveryone:" + account.getRead()
-                                    + "; WritebyEveryone:" + account.getWrite());
+                            if (account.getRead() == 1 || (acct.getLoginStat() == 1 && account.getUserName().equals(cmdLine.getParameter(0)))) {
+                                outMgr.println(account.getUserName() + ": FileNum:" + account.getFileNum() + "; Login:" + account.getLoginStat() + "; FileName:" + account.getFileName()
+                                        + "; Url:" + account.getUrl() + "; Size:" + account.getSize() + "; Public access:" + account.getAccess() + "; ReadByEveryone:" + account.getRead()
+                                        + "; WritebyEveryone:" + account.getWrite());
                             }
                         }
                         break;
                     case UPDATEFILE:
-                        acct01= catalog.getAcc(cmdLine.getParameter(0));
+                        acct01 = catalog.getAcc(cmdLine.getParameter(0));
                         acct = catalog.getAccount(cmdLine.getParameter(1));
-                        if((acct.getUserName().equalsIgnoreCase(acct01.getUserName())&& acct.getLoginStat()==1) || acct.getWrite()==1){
-                        catalog.fileupdating(acct, cmdLine.getParameter(2), cmdLine.getParameter(3),
-                                cmdLine.getParameter(4), Integer.parseInt(cmdLine.getParameter(5)), Integer.parseInt(cmdLine.getParameter(6)),
-                                Integer.parseInt(cmdLine.getParameter(7)), Integer.parseInt(cmdLine.getParameter(8)));
+                        if ((acct.getUserName().equalsIgnoreCase(acct01.getUserName()) && acct.getLoginStat() == 1) || acct.getWrite() == 1) {
+                            catalog.fileupdating(acct, cmdLine.getParameter(2), cmdLine.getParameter(3),
+                                    cmdLine.getParameter(4), Integer.parseInt(cmdLine.getParameter(5)), Integer.parseInt(cmdLine.getParameter(6)),
+                                    Integer.parseInt(cmdLine.getParameter(7)), Integer.parseInt(cmdLine.getParameter(8)));
                         }
                         break;
-   /*!!!!!!! */         case DELETEFILE: //REMEMBER: getAcc is for getting a file by username, while getAccount is by filenum!!!!!
+                    /*!!!!!!! */ case DELETEFILE: //REMEMBER: getAcc is for getting a file by username, while getAccount is by filenum!!!!!
                         acct = catalog.getAcc(cmdLine.getParameter(0));
                         catalog.filedelete(acct, cmdLine.getParameter(1));
                         break;
