@@ -61,12 +61,12 @@ public class NonBlockingInterpreter implements Runnable {
                     case ADDFILE:
                         acct = catalog.getAcc(cmdLine.getParameter(0));
                         if(acct.getLoginStat()==1){
-                        catalog.addafil(cmdLine.getParameter(0), acct.getPassWord(), cmdLine.getParameter(1));
+                        catalog.addafil(cmdLine.getParameter(0), acct.getPassWord(), cmdLine.getParameter(1), cmdLine.getParameter(2));
                         }
                         break;
                     case REGISTER:
                        // acct = catalog.getAcc(cmdLine.getParameter(0));
-                      //  if (acct.equals(null)|| !acct.getUserName().equals(cmdLine.getParameter(0))){ //this makes sure that no client je kreiran
+                      //  if (acct.equals(null)|| !acct.getUserName().equals(cmdLine.getParameter(0))){ //this makes sure that nema client je kreiran
                         catalog.createAccount(cmdLine.getParameter(0), cmdLine.getParameter(1), cmdLine.getParameter(2));
                        // }
                         break;
@@ -81,7 +81,7 @@ public class NonBlockingInterpreter implements Runnable {
                         catalog.deleteAccount(acct);
                         break;
                     case LIST:  //NOT FIXED
-                        acct = catalog.getAccount(cmdLine.getParameter(0));
+                        acct = catalog.getAcc(cmdLine.getParameter(0));
                         List<? extends AccountDTO> accounts = catalog.listAccounts();
                         for (AccountDTO account : accounts) {
                             if(account.getRead()==1||(acct.getLoginStat()==1 &&account.getUserName().equals(cmdLine.getParameter(0)))){

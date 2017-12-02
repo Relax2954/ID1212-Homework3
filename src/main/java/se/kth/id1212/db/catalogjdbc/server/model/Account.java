@@ -80,6 +80,11 @@ public class Account implements AccountDTO {
     public Account(String userName, String passWord, String filenum, CatalogDAO catalogDB) {
         this(userName, passWord, 0, filenum, null, null, 0, 0, 0, 0, catalogDB);
     }
+    
+    //this constructor is for adding a file
+    public Account(String userName, String passWord, String filenum, String url, CatalogDAO catalogDB) {
+        this(userName, passWord, 0, filenum, null, url, 0, 0, 0, 0, catalogDB);
+    }
 
     public void filedelete(String filenum) throws RejectedException {
         changeFileInfo(filenum, null, null, 0, 0, 0, 0, "Could not delete the file.");
