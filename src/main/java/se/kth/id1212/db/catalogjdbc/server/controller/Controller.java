@@ -120,7 +120,7 @@ public class Controller extends UnicastRemoteObject implements Catalog {
         }
     }
 
-    @Override
+    @Override //this is actually used for UPDATING A FILE
     public synchronized void fileadding(AccountDTO acctDTO, String filenum, String filename, String url, int size, int access, int read, int write) throws RejectedException, AccountException {
         Account acct = (Account) getAccount(acctDTO.getFileNum());
         acct.fileadding(filenum,filename,url,size,access, read,write);

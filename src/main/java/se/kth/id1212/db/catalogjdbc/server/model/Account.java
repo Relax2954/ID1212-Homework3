@@ -38,16 +38,16 @@ public class Account implements AccountDTO {
      */
     public Account(String userName, String passWord, int loginStat, String filenum, String filename, String url, int size, int access, int read, int write, CatalogDAO catalogDB) {
         this.userName = userName;
-        this.passWord= passWord;
-        this.loginStat=loginStat;
+        this.passWord = passWord;
+        this.loginStat = loginStat;
         this.filenum = filenum;
         this.fileName = filename;
         this.url = url;
-        this.size=size;
+        this.size = size;
         this.access = access;
         this.read = read;
         this.write = write;
-        this.catalogDB=catalogDB;
+        this.catalogDB = catalogDB;
     }
 
     /**
@@ -80,28 +80,32 @@ public class Account implements AccountDTO {
     public Account(String userName, String passWord, String filenum, CatalogDAO catalogDB) {
         this(userName, passWord, 0, filenum, null, null, 0, 0, 0, 0, catalogDB);
     }
-    
+
     //this constructor is for adding a file
     public Account(String userName, String passWord, String filenum, String url, CatalogDAO catalogDB) {
         this(userName, passWord, 0, filenum, null, url, 0, 0, 0, 0, catalogDB);
     }
 
     public void filedelete(String filenum) throws RejectedException {
-        changeFileInfo(filenum, null, null, 0, 0, 0, 0, "Could not delete the file.");
+        try {
+            catalogDB.deleteUpdateAccountFile(this);
+        } catch (Exception e) {
+            throw new RejectedException("Faillll" + accountInfo(), e);
+        }
     }
-    /**
-     * THIS IS USED FOR EDITING A FILE.
-     *
-     * @param filenum
-     * @param filename
-     * @param url
-     * @param size
-     * @param access
-     * @param read
-     * @param write
-     * @throws AccountException If the specified num is negative, or if unable
-     * to perform the update.
-     */
+        /**
+         * THIS IS USED FOR EDITING A FILE.
+         *
+         * @param filenum
+         * @param filename
+         * @param url
+         * @param size
+         * @param access
+         * @param read
+         * @param write
+         * @throws AccountException If the specified num is negative, or if
+         * unable to perform the update.
+         */
     public void fileadding(String filenum, String filename, String url, int size, int access, int read, int write) throws RejectedException {
         /*if (filenum < 0) {
         throw new RejectedException(
@@ -110,12 +114,10 @@ public class Account implements AccountDTO {
         changeFileInfo(filenum, filename, url, size, access, read, write, "Could not add the file.");
     }
 
-   
-
     private void changeFileInfo(String newfilenum, String newfilename, String newurl, int newsize,
-        int newaccess, int newread, int newwrite, String failureMsg) throws RejectedException {
-        String initialpassword=this.passWord;
-        int initiallogin=this.loginStat;
+            int newaccess, int newread, int newwrite, String failureMsg) throws RejectedException {
+        String initialpassword = this.passWord;
+        int initiallogin = this.loginStat;
         String initialfilenum = filenum;
         String initialfileName = fileName;
         String initialurl = url;
@@ -125,8 +127,8 @@ public class Account implements AccountDTO {
         int initialwrite = write;
 
         try {
-            passWord=initialpassword;
-            loginStat=initiallogin;
+            passWord = initialpassword;
+            loginStat = initiallogin;
             filenum = newfilenum;
             fileName = newfilename;
             url = newurl;
@@ -147,7 +149,7 @@ public class Account implements AccountDTO {
         }
     }
 
-     private String accountInfo() {
+    private String accountInfo() {
         return " " + this;
     }
 
@@ -185,14 +187,15 @@ public class Account implements AccountDTO {
     public String getUserName() {
         return userName;
     }
-    public String getPassWord(){
+
+    public String getPassWord() {
         return passWord;
     }
-    public int getLoginStat(){
+
+    public int getLoginStat() {
         return loginStat;
     }
-    
-    
+
     /**
      * @return A string representation of all fields in this object.
      */

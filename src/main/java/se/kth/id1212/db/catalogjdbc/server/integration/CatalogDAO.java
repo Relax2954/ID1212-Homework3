@@ -38,6 +38,7 @@ public class CatalogDAO {
     private PreparedStatement addFileStmt;
     private PreparedStatement loginAccountStmt;
     private PreparedStatement findAccountNOMStmt;
+    private PreparedStatement deleteFileStmt;
 
     /**
      * Constructs a new DAO object connected to the specified database.
@@ -225,6 +226,15 @@ public class CatalogDAO {
      * @param account The account to update.
      * @throws CatalogDBException If unable to update the specified account.
      */
+    
+    public void deleteUpdateAccountFile(AccountDTO account) throws CatalogDBException {
+       try { 
+    deleteFileStmt.setString(1, account.getFileNum());
+    deleteFileStmt.executeUpdate();
+     } catch (SQLException sqle) {
+            throw new CatalogDBException("Could not delete file from account: " + account, sqle);
+        }
+    }
     public void updateAccount(AccountDTO account) throws CatalogDBException {
         try {
             addFileStmt.setString(1, account.getPassWord());
@@ -306,6 +316,9 @@ public class CatalogDAO {
                 + TABLE_NAME
                 + " SET  password=?, loginstat=?,  filename=?,  url=?,  size=?,  access=?, "
                 + " readd=?, writee=?  WHERE (name= ? AND filenum=?) ");
+        deleteFileStmt = connection.prepareStatement("DELETE FROM "
+                + TABLE_NAME
+                + " WHERE filenum = ?");
     }
 
 }

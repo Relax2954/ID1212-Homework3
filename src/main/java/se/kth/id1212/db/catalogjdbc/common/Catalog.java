@@ -63,6 +63,8 @@ public interface Catalog extends Remote {
      */
     public List<? extends AccountDTO> listAccounts() throws RemoteException, AccountException;
 
+    
+    //FILEADDING IS USED FOR UPDATING A FILE
     public void fileadding(AccountDTO acct, String filenum, String filename, String url, int size, int access, int read, int write) throws RemoteException, RejectedException,
                                                          AccountException;
     
@@ -70,6 +72,7 @@ public interface Catalog extends Remote {
      * Deletes the specified file from the specified account.
      *
      * @param acct   The account from which to delete a file.
+     * @param filenum
      * @param fileName the name of the file in the database to delete
      * @throws RemoteException   If unable to complete the RMI call.
      * @throws RejectedException If the specified file is non-existant, or if unable to perform the update-

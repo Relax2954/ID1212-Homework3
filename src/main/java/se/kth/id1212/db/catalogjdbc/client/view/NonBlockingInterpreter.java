@@ -100,8 +100,8 @@ public class NonBlockingInterpreter implements Runnable {
                                 Integer.parseInt(cmdLine.getParameter(7)), Integer.parseInt(cmdLine.getParameter(8)));
                         }
                         break;
-                    case DELETEFILE:
-                        acct = catalog.getAccount(cmdLine.getParameter(0));
+   /*!!!!!!! */         case DELETEFILE: //REMEMBER: getAcc is for getting a file by username, while getAccount is by filenum!!!!!
+                        acct = catalog.getAcc(cmdLine.getParameter(0));
                         catalog.filedelete(acct, cmdLine.getParameter(1));
                         break;
                     case FILEREAD://this lists all files from a specific user, this is NOT NECESSARY ???
