@@ -30,13 +30,13 @@ public class NonBlockingInterpreter implements Runnable {
     private final ThreadSafeStdOut outMgr = new ThreadSafeStdOut();
     private Catalog catalog;
     private final CatalogClient myRemoteObj;
-    private final CatalogClient thatRemoteObj;
+    // private final CatalogClient thatRemoteObj;
     private int myIdAtServer;
     private boolean receivingCmds = false;
 
     public NonBlockingInterpreter() throws RemoteException {
         myRemoteObj = new ConsoleOutput(); //the current client
-        thatRemoteObj= new ConsoleOutput(); //the client to be notified of something
+        //thatRemoteObj= new ConsoleOutput(); //the client to be notified of something
     }
 
     /**
@@ -62,7 +62,11 @@ public class NonBlockingInterpreter implements Runnable {
     public void run() {
         AccountDTO acct = null;
         AccountDTO acct01 = null;
-        String remotnanodica=null;
+        String remotnanodica = null;
+        int OnaNodicaID = 0; //the id of a user to be notified when smb acceses their file
+        CatalogClient toBeNotified; //the node of the user to be notified;
+        int doesnotify = 0; //checks whether the specific user wants to be notified if someone access that specific file
+        String accUserName = null; //the username of the acc that is to be notified
         while (receivingCmds) {
             try {
                 CmdLine cmdLine = new CmdLine(readNextLine());
@@ -75,29 +79,36 @@ public class NonBlockingInterpreter implements Runnable {
                             System.out.println(command.toString().toLowerCase());
                         }
                         break;
-                        /*case QUIT:
+                    /*case QUIT:
                         receivingCmds = false;
-                    break;*/                   
+                    break;*/
                     case UPLOADFILE:
                         acct = catalog.getAcc(cmdLine.getParameter(0));
-                        remotnanodica=catalog.RgetUsername(myIdAtServer);
-                        if(remotnanodica.equalsIgnoreCase(acct.getUserName())){
-                        if (acct.getLoginStat() == 1) {
-                            File myfilesize = new File(cmdLine.getParameter(2));
-                            int fileSizeInBytes = (int) myfilesize.length();
-                            catalog.addafil(cmdLine.getParameter(0), acct.getPassWord(), cmdLine.getParameter(1), cmdLine.getParameter(2), cmdLine.getParameter(3), fileSizeInBytes);
-                            FileClient.clientTCP(cmdLine.getParameter(2), cmdLine.getParameter(3));
-                        }
+                        remotnanodica = catalog.RgetUsername(myIdAtServer);
+                        if (remotnanodica.equalsIgnoreCase(acct.getUserName())) {
+                            if (acct.getLoginStat() == 1) {
+                                File myfilesize = new File(cmdLine.getParameter(2));
+                                int fileSizeInBytes = (int) myfilesize.length();
+                                catalog.addafil(cmdLine.getParameter(0), acct.getPassWord(), cmdLine.getParameter(1), cmdLine.getParameter(2), cmdLine.getParameter(3), fileSizeInBytes);
+                                FileClient.clientTCP(cmdLine.getParameter(2), cmdLine.getParameter(3));
+                            }
                         }
                         break;
                     case DOWNLOADFILE:
                         acct01 = catalog.getAcc(cmdLine.getParameter(0));
                         acct = catalog.getAccount(cmdLine.getParameter(1));
-                        remotnanodica=catalog.RgetUsername(myIdAtServer);
-                        if(remotnanodica.equalsIgnoreCase(acct01.getUserName())){
-                        if ((acct.getUserName().equalsIgnoreCase(acct01.getUserName()) && acct.getLoginStat() == 1) || acct.getRead() == 1) {
-                            FileClientDownload.clientTCPDownload(cmdLine.getParameter(2), cmdLine.getParameter(3));
-                        }
+                        accUserName = acct.getUserName();//the username of the acc to be notified
+                        remotnanodica = catalog.RgetUsername(myIdAtServer);
+                        OnaNodicaID = catalog.RgetID(accUserName);  //GETS THE ID OF THE CLIENT THAT IS TO BE NOTIFIED
+                        toBeNotified = catalog.RgetRemoteNode(OnaNodicaID);
+                        doesnotify = acct.getAccess();
+                        if (remotnanodica.equalsIgnoreCase(acct01.getUserName())) {
+                            if ((acct.getUserName().equalsIgnoreCase(acct01.getUserName()) && acct.getLoginStat() == 1) || acct.getRead() == 1) {
+                                FileClientDownload.clientTCPDownload(cmdLine.getParameter(2), cmdLine.getParameter(3));
+                                if (doesnotify == 1 && !accUserName.equals(remotnanodica)) {
+                                        toBeNotified.RrecvMsg("The user " + remotnanodica + " just downloaded your file,"+ acct.getFileName()+" and you wanted to be notified.");
+                                    }
+                            }
                         }
                         break;
                     case REGISTER:
@@ -110,70 +121,85 @@ public class NonBlockingInterpreter implements Runnable {
                     case LOGIN:
                         catalog.loginAccount(cmdLine.getParameter(0), cmdLine.getParameter(1));
                         acct = catalog.getAcc(cmdLine.getParameter(0));
-                        if(acct.getLoginStat()==1){
-                        myIdAtServer = catalog.Rlogin(myRemoteObj,
-                                    new Credentials(cmdLine.getParameter(0),cmdLine.getParameter(1)));
-                        lookupServer(cmdLine.getParameter(2));
-                        }
-                        else
+                        if (acct.getLoginStat() == 1) {
+                            myIdAtServer = catalog.Rlogin(myRemoteObj,
+                                    new Credentials(cmdLine.getParameter(0), cmdLine.getParameter(1)));
+                            lookupServer(cmdLine.getParameter(2));
+                        } else {
                             System.out.println("Invalid username and/or password");
+                        }
                         break;
                     case LOGOUT:
                         acct = catalog.getAcc(cmdLine.getParameter(0));
-                        remotnanodica=catalog.RgetUsername(myIdAtServer);
-                        if(remotnanodica.equalsIgnoreCase(acct.getUserName())){
-                        catalog.logoutAccount(cmdLine.getParameter(0), cmdLine.getParameter(1));
-                        receivingCmds = false;
-                        catalog.Rlogout(myIdAtServer);
-                        boolean forceUnexport = false;
-                        UnicastRemoteObject.unexportObject(myRemoteObj, forceUnexport);
+                        remotnanodica = catalog.RgetUsername(myIdAtServer);
+                        if (remotnanodica.equalsIgnoreCase(acct.getUserName())) {
+                            catalog.logoutAccount(cmdLine.getParameter(0), cmdLine.getParameter(1));
+                            receivingCmds = false;
+                            catalog.Rlogout(myIdAtServer);
+                            boolean forceUnexport = false;
+                            UnicastRemoteObject.unexportObject(myRemoteObj, forceUnexport);
                         }
                         break;
                     case UNREGISTER:
                         acct = catalog.getAcc(cmdLine.getParameter(0));
-                        remotnanodica=catalog.RgetUsername(myIdAtServer);
-                        if(remotnanodica.equalsIgnoreCase(acct.getUserName())){
-                        catalog.deleteAccount(cmdLine.getParameter(0), cmdLine.getParameter(1));
+                        remotnanodica = catalog.RgetUsername(myIdAtServer);
+                        if (remotnanodica.equalsIgnoreCase(acct.getUserName())) {
+                            catalog.deleteAccount(cmdLine.getParameter(0), cmdLine.getParameter(1));
                         }
                         break;
                     case LIST:
                         acct = catalog.getAcc(cmdLine.getParameter(0));
-                        remotnanodica=catalog.RgetUsername(myIdAtServer);
-                        if(remotnanodica.equalsIgnoreCase(acct.getUserName())){
-                        List<? extends AccountDTO> accounts = catalog.listAccounts();
-                        for (AccountDTO account : accounts) {
-                            if (account.getRead() == 1 || (acct.getLoginStat() == 1 && account.getUserName().equals(cmdLine.getParameter(0)))) {
-                                outMgr.println(account.getUserName() + ": FileNum:" + account.getFileNum() + "; Login:" + account.getLoginStat() + "; FileName:" + account.getFileName()
-                                        + "; Url:" + account.getUrl() + "; Size:" + account.getSize() + "; Public access:" + account.getAccess() + "; ReadByEveryone:" + account.getRead()
-                                        + "; WritebyEveryone:" + account.getWrite());
+                        remotnanodica = catalog.RgetUsername(myIdAtServer);
+                        if (remotnanodica.equalsIgnoreCase(acct.getUserName())) {
+                            List<? extends AccountDTO> accounts = catalog.listAccounts();
+                            for (AccountDTO account : accounts) {
+                                if (account.getRead() == 1 || (acct.getLoginStat() == 1 && account.getUserName().equals(cmdLine.getParameter(0)))) {
+                                    OnaNodicaID = catalog.RgetID(account.getUserName());  //GETS THE ID OF THE CLIENT THAT IS TO BE NOTIFIED
+                                    toBeNotified = catalog.RgetRemoteNode(OnaNodicaID);
+                                    doesnotify = account.getAccess();
+                                    outMgr.println(account.getUserName() + ": FileNum:" + account.getFileNum() + "; Login:" + account.getLoginStat() + "; FileName:" + account.getFileName()
+                                            + "; Url:" + account.getUrl() + "; Size:" + account.getSize() + "; Public access:" + account.getAccess() + "; ReadByEveryone:" + account.getRead()
+                                            + "; WritebyEveryone:" + account.getWrite());
+                                    if (doesnotify == 1 && !account.getUserName().equals(remotnanodica)) {
+                                        toBeNotified.RrecvMsg("The user " + remotnanodica + " just read your file"+ account.getFileName()+ ", and you wanted to be notified.");
+                                    }
+                                }
                             }
-                        }
                         }
                         break;
                     case UPDATEFILE:
                         acct01 = catalog.getAcc(cmdLine.getParameter(0));
                         acct = catalog.getAccount(cmdLine.getParameter(1));
-                        String accUserName=acct.getUserName();
-                        remotnanodica=catalog.RgetUsername(myIdAtServer);
-                        int OnaNodicaID=catalog.RgetID(accUserName);  //GETS THE ID OF THE CLIENT THAT IS TO BE NOTIFIED
-                        CatalogClient toBeNotified=catalog.RgetRemoteNode(OnaNodicaID); 
-                        int doesnotify=acct.getAccess();
-                        if(remotnanodica.equalsIgnoreCase(acct01.getUserName())){
-                        if ((acct.getUserName().equalsIgnoreCase(acct01.getUserName()) && acct.getLoginStat() == 1) || acct.getWrite() == 1) {
-                            File myfilename = new File("/Users/SasaLekic/Documents/TCPOutput/" + acct.getFileName());
-                            myfilename.renameTo(new File("/Users/SasaLekic/Documents/TCPOutput/" + cmdLine.getParameter(3)));
-                            catalog.fileupdating(acct, cmdLine.getParameter(2), cmdLine.getParameter(3),
-                                    cmdLine.getParameter(4), Integer.parseInt(cmdLine.getParameter(5)), Integer.parseInt(cmdLine.getParameter(6)),
-                                    Integer.parseInt(cmdLine.getParameter(7)), Integer.parseInt(cmdLine.getParameter(8)));
-                             
-                        }
+                        accUserName = acct.getUserName();//the username of the acc to be notified
+                        remotnanodica = catalog.RgetUsername(myIdAtServer);
+                        OnaNodicaID = catalog.RgetID(accUserName);  //GETS THE ID OF THE CLIENT THAT IS TO BE NOTIFIED
+                        toBeNotified = catalog.RgetRemoteNode(OnaNodicaID);
+                        doesnotify = acct.getAccess();
+                        if (remotnanodica.equalsIgnoreCase(acct01.getUserName())) {
+                            if ((acct.getUserName().equalsIgnoreCase(acct01.getUserName()) && acct.getLoginStat() == 1) || acct.getWrite() == 1) {
+                                File myfilename = new File("/Users/SasaLekic/Documents/TCPOutput/" + acct.getFileName());
+                                myfilename.renameTo(new File("/Users/SasaLekic/Documents/TCPOutput/" + cmdLine.getParameter(3)));
+                                catalog.fileupdating(acct, cmdLine.getParameter(2), cmdLine.getParameter(3),
+                                        cmdLine.getParameter(4), Integer.parseInt(cmdLine.getParameter(5)), Integer.parseInt(cmdLine.getParameter(6)),
+                                        Integer.parseInt(cmdLine.getParameter(7)), Integer.parseInt(cmdLine.getParameter(8)));
+                                if (doesnotify == 1 && !accUserName.equals(remotnanodica)) {
+                                    toBeNotified.RrecvMsg("The user " + remotnanodica + " just updated your file "+acct.getFileName()+", and you wanted to be notified.");
+                                }
+                            }
                         }
                         break;
                     /*!!!!!!! */ case DELETEFILE: //REMEMBER: getAcc is for getting a file by username, while getAccount is by filenum!!!!!
                         acct = catalog.getAcc(cmdLine.getParameter(0));
-                        remotnanodica=catalog.RgetUsername(myIdAtServer);
-                        if(remotnanodica.equalsIgnoreCase(acct.getUserName())){
-                        catalog.filedelete(acct, cmdLine.getParameter(1));
+                        acct01=catalog.getAccount(cmdLine.getParameter(1)); //this finds the account who owns the file that is to be deleted
+                        remotnanodica = catalog.RgetUsername(myIdAtServer);
+                        OnaNodicaID = catalog.RgetID(accUserName);  //GETS THE ID OF THE CLIENT THAT IS TO BE NOTIFIED
+                        toBeNotified = catalog.RgetRemoteNode(OnaNodicaID);
+                        doesnotify = acct.getAccess();
+                        if (remotnanodica.equalsIgnoreCase(acct.getUserName())) {
+                            if (doesnotify == 1 && !acct01.getUserName().equals(remotnanodica)) {
+                                    toBeNotified.RrecvMsg("The user " + remotnanodica + " just deleted your file "+acct.getFileName()+", and you wanted to be notified.");
+                                }
+                            catalog.filedelete(acct, cmdLine.getParameter(1));
                         }
                         break;
                     case FILEREAD://this lists all files from a specific user, this is NOT NECESSARY ???
