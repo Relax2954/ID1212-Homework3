@@ -256,9 +256,7 @@ public class CatalogDAO {
                     + URL_COLUMN_NAME + " VARCHAR(250), " + SIZE_COLUMN_NAME + " FLOAT, " + ACCESS_COLUMN_NAME + " INT, "
                     + READ_COLUMN_NAME + " INT, " + WRITE_COLUMN_NAME + " INT ) ");
 
-            /*statement.executeUpdate("CREATE TABLE " + TABLE_NAME
-            + " (" + USER_COLUMN_NAME + " VARCHAR(32) PRIMARY KEY, "
-            + FILENUM_COLUMN_NAME + " FLOAT, " + FILEE_COLUMN_NAME + " VARCHAR(32) )");*/
+        
         }
         return connection;
     }

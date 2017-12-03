@@ -212,7 +212,7 @@ public class NonBlockingInterpreter implements Runnable {
                         }
                         break;*/
                     default:
-                        outMgr.println("Done");
+                        outMgr.println(" ");
                 }
             } catch (Exception e) {
                 outMgr.println("Operation failed");
