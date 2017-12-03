@@ -30,13 +30,12 @@ public class NonBlockingInterpreter implements Runnable {
     private final ThreadSafeStdOut outMgr = new ThreadSafeStdOut();
     private Catalog catalog;
     private final CatalogClient myRemoteObj;
-    // private final CatalogClient thatRemoteObj;
     private int myIdAtServer;
     private boolean receivingCmds = false;
 
     public NonBlockingInterpreter() throws RemoteException {
         myRemoteObj = new ConsoleOutput(); //the current client
-        //thatRemoteObj= new ConsoleOutput(); //the client to be notified of something
+        
     }
 
     /**
@@ -44,7 +43,7 @@ public class NonBlockingInterpreter implements Runnable {
      * when this method returns. Calling <code>start</code> on an interpreter
      * that is already started has no effect.
      *
-     * @param server The server with which this  client will communicate.
+     * @param catalog The server with which this  client will communicate.
      */
     public void start(Catalog catalog) {
         this.catalog = catalog;
