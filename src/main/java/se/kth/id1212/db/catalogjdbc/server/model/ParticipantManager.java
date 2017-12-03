@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Random;
 
 /**
- * Keeps track of all active participants in the conversation, and is also responsible for sending
+ * Keeps track of all active participants in the catalog, and is also responsible for sending
  * messages to participants.
  */
 public class ParticipantManager {
@@ -48,7 +48,7 @@ public class ParticipantManager {
     }
 
     /**
-     * Removes the specified participant from the conversation. No more messages will be sent to
+     * Removes the specified participant from the catalog. No more messages will be sent to
      * that participant.
      *
      * @param id The id of the participant that shall be removed.
@@ -57,17 +57,5 @@ public class ParticipantManager {
         participants.remove(id);
     }
 
-    /**
-     * Send the specified message to all participants in the conversation.
-     *
-     * @param msg The message to send.
-     */
-    void broadcast(String msg) {
-        synchronized (participants) {
-            for (Participant participant : participants.values()) {
-                participant.send(msg);
-            }
-        }
-    }
 
 }

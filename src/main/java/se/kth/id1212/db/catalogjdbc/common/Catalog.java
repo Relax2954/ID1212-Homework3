@@ -18,9 +18,7 @@ public interface Catalog extends Remote {
     
     int Rlogin(CatalogClient remoteNode, Credentials credentials) throws RemoteException;
     
-    void RchangeNickname(int id, String username) throws RemoteException;
     
-    void RnotifyMsg(int id, String msg) throws RemoteException;
     public String RgetUsername(int id) throws RemoteException;
     public int RgetID(String userName) throws RemoteException;
     //public Participant RGetParticipant(int id) throws RemoteException;
@@ -32,7 +30,7 @@ public interface Catalog extends Remote {
 
     
     /**
-     * Creates an account with the specified name and the balance zero.
+     * Creates an account with the specified name and password and the num of file.
      *
      * @param name The account user's name.
      * @param password

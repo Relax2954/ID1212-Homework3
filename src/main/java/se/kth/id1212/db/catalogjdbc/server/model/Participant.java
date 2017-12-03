@@ -48,18 +48,7 @@ public class Participant {
         this(id, DEFAULT_USERNAME, remoteNode, mgr);
     }
 
-    /**
-     * Send the specified message to the participant's remote node.
-     *
-     * @param msg The message to send.
-     */
-    public void send(String msg) {
-        try {
-            remoteNode.RrecvMsg(msg);
-        } catch (RemoteException re) {
-            throw new MessageException("Failed to deliver message to " + username + ".");
-        }
-    }
+
 
     
 
@@ -91,7 +80,7 @@ public class Participant {
     
 
     /**
-     * Inform other participants that this participant is leaving the conversation.
+     * Participant leaving
      */
     public void Rlogout() {
     }

@@ -2,7 +2,7 @@
 package se.kth.id1212.db.catalogjdbc.client.view;
 
 /**
- * Defines all commands that can be performed by a user of the chat application.
+ * Defines all commands that can be performed by a user of the application.
  */
 public enum Command {
     /**
@@ -37,15 +37,15 @@ public enum Command {
     /**
      * Reads a specific file.
      */
-    FILEREAD,
+    //FILEREAD,
     /**
      * Lists all commands.
      */
     HELP,
     /**
-     * Leave the chat application.
+     * Leave the application.
      */
-    QUIT,
+    //QUIT,
     /**
      * None of the valid commands above was specified.
      */

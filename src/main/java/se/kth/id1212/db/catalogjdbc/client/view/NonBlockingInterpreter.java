@@ -44,7 +44,7 @@ public class NonBlockingInterpreter implements Runnable {
      * when this method returns. Calling <code>start</code> on an interpreter
      * that is already started has no effect.
      *
-     * @param server The server with which this chat client will communicate.
+     * @param server The server with which this  client will communicate.
      */
     public void start(Catalog catalog) {
         this.catalog = catalog;
@@ -202,16 +202,16 @@ public class NonBlockingInterpreter implements Runnable {
                             catalog.filedelete(acct, cmdLine.getParameter(1));
                         }
                         break;
-                    case FILEREAD://this lists all files from a specific user, this is NOT NECESSARY ???
-
+                        /* case FILEREAD://this lists all files from a specific user, this is NOT NECESSARY ???
+                        
                         //acct = catalog.getAccountByFileName(cmdLine.getParameter(0));
                         if (acct.getRead() == 1) {
-                            outMgr.println(acct.getFileNum() + acct.getFileName() + acct.getUrl() + Integer.toString(acct.getSize())
-                                    + Integer.toString(acct.getAccess()) + Integer.toString(acct.getRead()) + Integer.toString(acct.getWrite()));
+                        outMgr.println(acct.getFileNum() + acct.getFileName() + acct.getUrl() + Integer.toString(acct.getSize())
+                        + Integer.toString(acct.getAccess()) + Integer.toString(acct.getRead()) + Integer.toString(acct.getWrite()));
                         } else {
-                            outMgr.println("File not readable");
+                        outMgr.println("File not readable");
                         }
-                        break;
+                        break;*/
                     default:
                         outMgr.println("Done");
                 }

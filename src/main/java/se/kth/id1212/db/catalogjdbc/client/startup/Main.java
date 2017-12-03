@@ -9,7 +9,7 @@ import se.kth.id1212.db.catalogjdbc.client.view.NonBlockingInterpreter;
 import se.kth.id1212.db.catalogjdbc.common.Catalog;
 
 /**
- * Starts the chat client.
+ * Starts the client.
  */
 public class Main {
     /**

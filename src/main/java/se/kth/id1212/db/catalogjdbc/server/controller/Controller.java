@@ -30,11 +30,6 @@ public class Controller extends UnicastRemoteObject implements Catalog {
         return participantId;
     }
 
-    @Override
-    public void RnotifyMsg(int id, String msg) {
-       // participantManager.findParticipant(id).broadcast(msg);
-    }
-
      @Override
     public String RgetUsername(int id) throws RemoteException {
        return participantManager.findParticipant(id).RgetUsername();
@@ -57,10 +52,6 @@ public class Controller extends UnicastRemoteObject implements Catalog {
         participantManager.removeParticipant(id);
     }
 
-    @Override
-    public void RchangeNickname(int id, String username) throws RemoteException {
-        participantManager.findParticipant(id).changeUsername(username);
-    }
     
     /*@Override
     public Participant RGetParticipant(int id) throws RemoteException {
